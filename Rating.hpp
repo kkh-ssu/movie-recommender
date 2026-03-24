@@ -1,4 +1,4 @@
-#pragma once;
+#pragma once
 
 class Rating{
     private:
@@ -13,4 +13,5 @@ class Rating{
         double getScore() const;
 
         void display() const;
+        
 };

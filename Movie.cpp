@@ -20,12 +20,18 @@ int         Movie::getReleaseYear()  const { return releaseYear; }
 int         Movie::getRatingCount()  const { return ratingCount; }
 
 double Movie::getAverageRating() const {
-    if (ratingCount == 0) return 0.0;   // 0 나눗셈 방어
+    if (ratingCount == 0) {
+        std::cout<<"0으로 나눌 수 없습니다."<<std::endl;    
+        return 0.0;
+    };   // 0 나눗셈 방어
     return totalRating / ratingCount;
 }
 
 void Movie::addRating(double r) {
-    if (r < 0.0 || r > 5.0) return;    // 유효성 검사
+    if (r < 0.0 || r > 5.0){ 
+        std::cout<<"유효하지 않은 범위의 평점 입니다 0 이상 5 이하의 평점을 추가해주세요."<<std::endl;
+        return;
+    };    // 유효성 검사
     totalRating += r;
     ratingCount++;
 }
