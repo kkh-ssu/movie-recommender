@@ -15,11 +15,11 @@ void UserManager::displayUsers() const {
     }
 }
 
-bool UserManager::validUser(const std::string& username) const {
+bool UserManager::validUser(const std::string& username, const std::string& email) const {
     for (const auto& user : users) {
-        if (user.getName() == username) {
-            return true;
-        }
+        if (user.getName() == username && user.getEmail() == email) { return true; }
     }
     return false;
 }
+
+int UserManager::getUserCount() const { return users.size(); }

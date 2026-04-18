@@ -1,7 +1,14 @@
 #include <vector>
 #include "Rating.hpp"
 #include "Movie.hpp"
+#include "MovieManager.hpp"
+#include <iostream>
+#include <algorithm>
 
+MovieManager::MovieManager()  {}
+
+
+int MovieManager::getMovieCount() const { return movies.size(); }
 void MovieManager::addMovie(const Movie& movie) {
     movies.push_back(movie);
 }
