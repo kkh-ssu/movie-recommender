@@ -1,17 +1,22 @@
 #pragma once
 
+#include "User.hpp"
+
 class Rating{
     private:
-        int userid;
+        User user;
         int movieid;
         double score;
     public:
-        Rating(int userid,int movieid,double score);
+        Rating(const User& user, int movieid, double score);
         
-        int getUserid() const;
-        int movieId() const;
+        const User& getUser() const;
+        int getMovieId() const;
         double getScore() const;
 
-        void display() const;
+
+
+        friend std::ostream& operator<<(std::ostream& os, const Rating& r);
+
         
 };

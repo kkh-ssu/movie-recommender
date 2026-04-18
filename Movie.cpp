@@ -1,54 +1,54 @@
 #include "Movie.hpp"
 #include <iostream>
+#include "RatingManager.hpp"
 
 // 기본 생성자
 Movie::Movie()
     : id(0), releaseYear(0),
-      totalRating(0.0), ratingCount(0) {}
+      ratingManager() {}
 
 // 4인자 생성자
 Movie::Movie(int id, const std::string& title,
              const std::string& genre, int year)
     : id(id), title(title), genre(genre),
       releaseYear(year),
-      totalRating(0.0), ratingCount(0) {}
+      ratingManager(RatingManager()) {}
 
 int         Movie::getId()           const { return id; }
 std::string Movie::getTitle()        const { return title; }
 std::string Movie::getGenre()        const { return genre; }
 int         Movie::getReleaseYear()  const { return releaseYear; }
-int         Movie::getRatingCount()  const { return ratingCount; }
 
-double Movie::getAverageRating() const {
-    if (ratingCount == 0) {
-        std::cout<<"0으로 나눌 수 없습니다."<<std::endl;    
-        return 0.0;
-    };   // 0 나눗셈 방어
-    return totalRating / ratingCount;
+bool Movie::operator==(const Movie& o) const {
+    return id == o.id;
 }
 
-void Movie::addRating(double r) {
-    if (r < 0.0 || r > 5.0){ 
-        std::cout<<"유효하지 않은 범위의 평점 입니다 0 이상 5 이하의 평점을 추가해주세요."<<std::endl;
-        return;
-    };    // 유효성 검사
-    totalRating += r;
-    ratingCount++;
+bool Movie::operator!=(const Movie& o) const {
+    return !(*this == o);
 }
 
-void Movie::display() const {           // 중복 제거 — 하나만 유지
-    std::cout << id << ". " << title
-              << " (" << releaseYear << ")"
-              << "  평점: " << getAverageRating()
-              << " (" << ratingCount << "건)"
-              << std::endl;
+bool Movie::operator<(const Movie& o) const {
+    return this->getAverageRating() < o.getAverageRating();
 }
 
-
-#if DEBUG
-int main(void){
-    Movie m1=Movie(1,"charlie","we",2025);
-    m1.display();
-    return 0;
+bool Movie::operator>(const Movie& o) const {
+    return this->getAverageRating() > o.getAverageRating();
 }
-#endif
+
+bool Movie::operator<=(const Movie& o) const {
+    return !(this->getAverageRating() > o.getAverageRating());
+}
+
+bool Movie::operator>=(const Movie& o) const {
+    return !(this->getAverageRating() < o.getAverageRating());
+}
+
+std::ostream& operator<<(std::ostream& os, const Movie& m) {
+    os << "ID: " << m.id << "\n"
+       << "제목: " << m.title << "\n"
+       << "장르: " << m.genre << "\n"
+       << "출시 연도: " << m.releaseYear << "\n"
+       << "평균 평점: " << m.ratingManager.getAverageRating() << "\n"
+       << "평가 수: " << m.ratingManager.getRatingCount();
+    return os;
+}

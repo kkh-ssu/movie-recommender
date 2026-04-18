@@ -18,8 +18,3 @@ std::string User::getEmail() const{
     return email;
 }
 
-void User::display() const {
-    std::cout<<"id: "<<id<<std::endl<<
-    "name: "<<name<<std::endl<<
-    "email: "<<email<<std::endl;
-}

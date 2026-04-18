@@ -1,14 +1,14 @@
 #include "Rating.hpp"
 #include <iostream>
 
-Rating::Rating(int userid, int movieid, double score):userid(userid),
-movieid(movieid),score(score) { }
+Rating::Rating(const User& user, int movieid, double score):user(user),
+movieid(movieid),score(score) { } //main에 validUser인지 체크하는 조건문 추가할것
 
-int Rating::getUserid() const {
-    return userid;
+const User& Rating::getUser() const {
+    return user;
 }
 
-int Rating::movieId() const {
+int Rating::getMovieId() const {
     return movieid;
 }
 
@@ -16,8 +16,3 @@ double Rating::getScore() const {
     return score;
 }
 
-void Rating::display() const {
-    std::cout<<"user ID: "<<userid<<std::endl<<
-    "movie ID: "<<movieid<<std::endl<<
-    "score: "<<score<<std::endl;
-}
