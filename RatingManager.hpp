@@ -1,16 +1,17 @@
+#pragma once
 #include <vector>
 #include "Rating.hpp"
 
 class RatingManager {
 private:
     std::vector<Rating> ratings;
-    int ratingCount;
     double totalRating;
+    int ratingCount;
     double averageRating;
 public:
     RatingManager() ;
     void addRating(const Rating& rating);
     int getRatingCount() const ;
     double getAverageRating() const ;
-    void displayRatings();
+    void displayRatings() const;
 };

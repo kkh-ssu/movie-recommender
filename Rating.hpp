@@ -5,13 +5,12 @@
 class Rating{
     private:
         User user;
-        int movieid;
+
         double score;
     public:
-        Rating(const User& user, int movieid, double score);
+        Rating(const User& user, double score);
         
         const User& getUser() const;
-        int getMovieId() const;
         double getScore() const;
 
 

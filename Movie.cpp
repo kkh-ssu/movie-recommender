@@ -18,7 +18,9 @@ int         Movie::getId()           const { return id; }
 std::string Movie::getTitle()        const { return title; }
 std::string Movie::getGenre()        const { return genre; }
 int         Movie::getReleaseYear()  const { return releaseYear; }
+double Movie::getAverageRating() const { return ratingManager.getAverageRating(); }
 RatingManager& Movie::getRatingManager() { return ratingManager; }
+const RatingManager& Movie::getRatingManager() const { return ratingManager; } 
 
 bool Movie::operator==(const Movie& o) const {
     return id == o.id;

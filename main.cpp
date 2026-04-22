@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include "Movie.hpp"
 #include "User.hpp"
 #include "Rating.hpp"
@@ -77,13 +78,13 @@ int main() {
             userManager.displayUsers();
             // 사용자 목록 출력 로직
             break;
-        case 7:
+        case 7:{
             std::cout<<"평점을 입력할 영화 제목을 입력해주세요 : ";
             std::string title;
             std::cin>>title;
-            const Movie* movie=movieManager.findMovieByTitle(title);
-            std::cout<<movie->getTitle()<<"의 평점을 입력합니다"<<std::endl;
+            Movie* movie=movieManager.findMovieByTitle(title);
             if (movie){
+                std::cout<<movie->getTitle()<<"의 평점을 입력합니다"<<std::endl;
                 std::cout<<"유저 목록"<<std::endl;
                 userManager.displayUsers();
                 std::cout<<"평점을 입력할 사용자 이름을 입력해주세요 : ";
@@ -93,8 +94,9 @@ int main() {
                     std::cout<<"평점을 입력해주세요 (0.0 ~ 5.0) : ";
                     double score;
                     std::cin>>score;
+                    const User* user=userManager.findUserByName(name);
                     if (score>=0.0 && score<=5.0){
-                        movie->getRatingManager().addRating(Rating(name,score));
+                        movie->getRatingManager().addRating(Rating(*user, score));
                         std::cout<<"평점이 입력되었습니다."<<std::endl;
                     }
                     else{
@@ -110,16 +112,35 @@ int main() {
             }
             // 평점 입력 로직
             break;
-        case 8:
+        }
+        case 8:{
             // 영화별 평점 보기 로직
+            std::cout<<"평점을 볼 영화 제목을 입력해주세요 : ";
+            std::string title;
+            std::cin>>title;
+            const Movie* movie=movieManager.findMovieByTitle(title);
+            if (movie){
+                std::cout<<movie->getTitle()<<"의 평점 목록"<<std::endl;
+                movie->getRatingManager().displayRatings();
+            }
+            else{
+                std::cout<<"영화를 찾을 수 없습니다."<<std::endl;
+            }
             break;
+
+        }
         case 0:
             std::cout << "프로그램을 종료합니다." << std::endl;
-            break;
+            return 0;
         default:
             std::cout << "잘못된 선택입니다. 다시 입력해주세요." << std::endl;
             break;
         }
+        std::cout<<std::endl;
+        std::cout<<"계속 하시려면 Enter 키를 누르세요...";
+        std::cin.ignore();
+        std::cin.get();
+        system("clear");
     }
 
     return 0;

@@ -22,9 +22,18 @@ bool UserManager::validUser(const std::string& username, const std::string& emai
     return false;
 }
 
-bool UserManager::validUser(const std::string &username) const{
+const User* UserManager::findUserByName(const std::string& username) const {
     for (const auto& user : users) {
-        if (user.getName() == username) { return true; }
+        if (user.getName() == username) {
+            return &user;
+        }
+    }
+    return nullptr;
+}
+
+bool UserManager::validUser(const std::string &username) const{
+    if (findUserByName(username) != nullptr) {
+        return true;
     }
     return false;
 }

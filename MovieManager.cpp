@@ -23,6 +23,15 @@ const Movie* MovieManager::findMovieByTitle(const std::string& title) const {
     return nullptr;
 }
 
+Movie* MovieManager::findMovieByTitle(const std::string& title) {
+    for (auto& movie : movies) {
+        if (movie.getTitle() == title) {
+            return &movie;
+        }
+    }
+    return nullptr;
+}
+
 void MovieManager::displayMovies() const {
     std::cout << "Movies:" << std::endl;
     for (const auto& movie : movies) {

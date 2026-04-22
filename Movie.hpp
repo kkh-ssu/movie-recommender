@@ -18,9 +18,10 @@ public:
     int         getId()              const;
     std::string getTitle()           const;
     std::string getGenre()           const;
-    int         getReleaseYear()     const;  // getYear → getReleaseYear
+    int         getReleaseYear()     const;  
     double      getAverageRating()   const;
     RatingManager& getRatingManager(); 
+    const RatingManager& getRatingManager() const; 
 
     bool operator==(const Movie& o) const;
     bool operator!=(const Movie& o) const;
