@@ -22,4 +22,11 @@ bool UserManager::validUser(const std::string& username, const std::string& emai
     return false;
 }
 
+bool UserManager::validUser(const std::string &username) const{
+    for (const auto& user : users) {
+        if (user.getName() == username) { return true; }
+    }
+    return false;
+}
+
 int UserManager::getUserCount() const { return users.size(); }

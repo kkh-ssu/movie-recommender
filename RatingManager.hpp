@@ -12,5 +12,5 @@ public:
     void addRating(const Rating& rating);
     int getRatingCount() const ;
     double getAverageRating() const ;
-
+    void displayRatings();
 };

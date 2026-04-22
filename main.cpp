@@ -38,14 +38,24 @@ int main() {
             break;
         }
         case 2:{
+            std::cout<<"검색 할 영화 제목을 입력해주세요 : ";
+            std::string title;
+            std::cin>>title;
+            const Movie* found=movieManager.findMovieByTitle(title);
+            if (found){
+                std::cout<<*found<<std::endl;
+            }
+            else{
+                std::cout<<"영화를 찾을 수 없습니다."<<std::endl;
+            }
             // 제목으로 검색 로직
             break;
         }
         case 3:
-            // 전체 목록 출력 로직
+            movieManager.displayMovies();
             break;
         case 4:
-            // 평점 순 정렬 출력 로직
+            movieManager.displaySortedByRating();
             break;
         case 5:{
             std::cout<<"추가 할 사용자 이름을 입력해주세요 : ";
@@ -64,9 +74,40 @@ int main() {
             break;
         }
         case 6:
+            userManager.displayUsers();
             // 사용자 목록 출력 로직
             break;
         case 7:
+            std::cout<<"평점을 입력할 영화 제목을 입력해주세요 : ";
+            std::string title;
+            std::cin>>title;
+            const Movie* movie=movieManager.findMovieByTitle(title);
+            std::cout<<movie->getTitle()<<"의 평점을 입력합니다"<<std::endl;
+            if (movie){
+                std::cout<<"유저 목록"<<std::endl;
+                userManager.displayUsers();
+                std::cout<<"평점을 입력할 사용자 이름을 입력해주세요 : ";
+                std::string name;
+                std::cin>>name;
+                if(userManager.validUser(name)){
+                    std::cout<<"평점을 입력해주세요 (0.0 ~ 5.0) : ";
+                    double score;
+                    std::cin>>score;
+                    if (score>=0.0 && score<=5.0){
+                        movie->getRatingManager().addRating(Rating(name,score));
+                        std::cout<<"평점이 입력되었습니다."<<std::endl;
+                    }
+                    else{
+                        std::cout<<"잘못된 평점입니다."<<std::endl;
+                    }
+                }
+                else{
+                    std::cout<<"사용자를 찾을 수 없습니다."<<std::endl;
+                }
+            }
+            else{
+                std::cout<<"영화를 찾을 수 없습니다."<<std::endl;
+            }
             // 평점 입력 로직
             break;
         case 8:

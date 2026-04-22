@@ -18,6 +18,7 @@ int         Movie::getId()           const { return id; }
 std::string Movie::getTitle()        const { return title; }
 std::string Movie::getGenre()        const { return genre; }
 int         Movie::getReleaseYear()  const { return releaseYear; }
+RatingManager& Movie::getRatingManager() { return ratingManager; }
 
 bool Movie::operator==(const Movie& o) const {
     return id == o.id;
@@ -47,7 +48,7 @@ std::ostream& operator<<(std::ostream& os, const Movie& m) {
     os << "ID: " << m.id << "\n"
        << "제목: " << m.title << "\n"
        << "장르: " << m.genre << "\n"
-       << "출시 연도: " << m.releaseYear << "\n"
+       << "출시 연도: " << m.releaseYear << "\n"           
        << "평균 평점: " << m.ratingManager.getAverageRating() << "\n"
        << "평가 수: " << m.ratingManager.getRatingCount();
     return os;

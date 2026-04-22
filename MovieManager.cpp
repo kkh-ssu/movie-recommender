@@ -9,18 +9,18 @@ MovieManager::MovieManager()  {}
 
 
 int MovieManager::getMovieCount() const { return movies.size(); }
+
 void MovieManager::addMovie(const Movie& movie) {
     movies.push_back(movie);
 }
 
-void MovieManager::findMovieByTitle(const std::string& title) const {
+const Movie* MovieManager::findMovieByTitle(const std::string& title) const {
     for (const auto& movie : movies) {
         if (movie.getTitle() == title) {
-            std::cout << movie << std::endl;
-            return;
+            return &movie;
         }
     }
-    std::cout << "영화를 찾을 수 없습니다: " << title << std::endl;
+    return nullptr;
 }
 
 void MovieManager::displayMovies() const {
@@ -30,7 +30,7 @@ void MovieManager::displayMovies() const {
     }
 }
 
-void MovieManager::displaySortedMovies() const {
+void MovieManager::displaySortedByRating() const {
     std::vector<Movie> sortedMovies = movies; 
     std::sort(sortedMovies.begin(), sortedMovies.end(),
               [](const Movie& a, const Movie& b) {

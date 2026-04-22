@@ -9,8 +9,8 @@ private:
 public:
     MovieManager();
     void addMovie(const Movie& movie);
-    void findMovieByTitle(const std::string& title) const;  
+    const Movie* findMovieByTitle(const std::string& title) const;  
     void displayMovies() const;
-    void displaySortedMovies() const; 
+    void displaySortedByRating() const; 
     int getMovieCount() const;
 };

@@ -20,6 +20,7 @@ public:
     std::string getGenre()           const;
     int         getReleaseYear()     const;  // getYear → getReleaseYear
     double      getAverageRating()   const;
+    RatingManager& getRatingManager(); 
 
     bool operator==(const Movie& o) const;
     bool operator!=(const Movie& o) const;

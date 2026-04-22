@@ -1,4 +1,5 @@
 #include <vector>
+#include <iostream>
 #include "Rating.hpp"
 
 class RatingManager {
@@ -17,6 +18,13 @@ class RatingManager {
             averageRating = totalRating / ratingCount;
         }
         int getRatingCount() const { return ratingCount; }
-        double averageRating() const { return averageRating; }
-
+        double getAverageRating() const { return averageRating; }
+        void displayRatings() {
+            std::cout << "Ratings:" << std::endl;
+            for (const auto& rating : ratings) {
+                std::cout << "User: " << rating.getUser().getName()
+                          << ", Movie ID: " << rating.getMovieId()
+                          << ", Score: " << rating.getScore() << std::endl;
+            }
+        }
 };

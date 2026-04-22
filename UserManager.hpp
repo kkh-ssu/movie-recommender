@@ -11,4 +11,5 @@ class UserManager {
         void displayUsers() const;
         int getUserCount() const ;
         bool validUser(const std::string& username,const std::string& email) const;
+        bool validUser(const std::string& username) const;
 };
