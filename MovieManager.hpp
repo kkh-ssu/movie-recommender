@@ -14,4 +14,5 @@ public:
     void displayMovies() const;
     void displaySortedByRating() const; 
     int getMovieCount() const;
+    bool alreadyExists(const std::string& title,const std::string genre,int year) const;
 };

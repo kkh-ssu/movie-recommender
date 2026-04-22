@@ -13,17 +13,23 @@ int main() {
     UserManager userManager;
     int mode=-1;
     while(mode){
-        std::cout<<"=== Movie Recommender ==="<<std::endl;
-        std::cout<<"[ 영화 ]\n1. 영화추가\n2. 제목으로검색\n3. 전체목록출력\n4. 평점순정렬출력\n"<<std::endl;
-        std::cout<<"[ 사용자 ]\n5. 사용자추가\n6. 사용자목록출력\n"<<std::endl;
-        std::cout<<"[ 평점 ]\n7. 평점입력\n8. 영화별 평점 보기\n"<<std::endl;
-        std::cout<<"0. 종료"<<std::endl;
-        std::cout<<"선택 >";
+        std::cout<<"=== Movie Recommender ===\n"<<std::endl;
+        std::cout<<"[ 영화 ]\n1. 영화 추가\n2. 제목으로 검색\n3. 전체 목록 출력\n4. 평점순 출력\n"<<std::endl;
+        std::cout<<"[ 사용자 ]\n5. 사용자 추가\n6. 사용자 목록 출력\n"<<std::endl;
+        std::cout<<"[ 평점 ]\n7. 평점 입력\n8. 영화별 평점 보기\n"<<std::endl;
+        std::cout<<"0. 종료\n"<<std::endl;
 
+        if(movieManager.getMovieCount()==0){
+            std::cout<<"경고: 등록된 영화가 없습니다. 영화를 추가해주세요.\n"<<std::endl;
+        }
+        if(userManager.getUserCount()==0){
+            std::cout<<"경고: 등록된 사용자가 없습니다. 사용자를 추가해주세요.\n"<<std::endl;
+        }
+
+        std::cout<<"선택 >";
         std::cin>>mode;
 
-        switch (mode)
-        {
+        switch (mode) {
         case 1 : {
             std::cout<<"추가 할 영화 제목을 입력해주세요 : ";
             std::string title;
@@ -34,14 +40,20 @@ int main() {
             std::cout<<"추가 할 영화 출시 연도를 입력해주세요 : ";
             int year;
             std::cin>>year;
+            if (movieManager.alreadyExists(title,genre,year)){
+                std::cout<<"이미 존재하는 영화입니다."<<std::endl;
+                break;
+            }
+            else{
             movieManager.addMovie(Movie(movieManager.getMovieCount() + 1, title, genre, year));
-            // 영화 추가 로직
+            std::cout<<"영화가 추가되었습니다."<<std::endl;
+            }
             break;
         }
         case 2:{
             std::cout<<"검색 할 영화 제목을 입력해주세요 : ";
             std::string title;
-            std::cin>>title;
+            std::cin>>title; //todo 제목이 같을 때 출시년도, 장르 물어보기
             const Movie* found=movieManager.findMovieByTitle(title);
             if (found){
                 std::cout<<*found<<std::endl;
@@ -49,15 +61,28 @@ int main() {
             else{
                 std::cout<<"영화를 찾을 수 없습니다."<<std::endl;
             }
-            // 제목으로 검색 로직
             break;
         }
-        case 3:
-            movieManager.displayMovies();
-            break;
-        case 4:
-            movieManager.displaySortedByRating();
-            break;
+        case 3:{
+            if (movieManager.getMovieCount()==0){
+                std::cout<<"등록된 영화가 없습니다."<<std::endl;
+                break;
+            }
+            else{
+                movieManager.displayMovies();
+                break;
+            }
+        }
+        case 4: {
+            if (movieManager.getMovieCount() == 0) {
+                std::cout << "등록된 영화가 없습니다." << std::endl;
+                break;
+            }
+            else {
+                movieManager.displaySortedByRating();
+                break;
+            }
+        }
         case 5:{
             std::cout<<"추가 할 사용자 이름을 입력해주세요 : ";
             std::string name;
@@ -74,10 +99,17 @@ int main() {
             }
             break;
         }
-        case 6:
-            userManager.displayUsers();
-            // 사용자 목록 출력 로직
-            break;
+        case 6:{
+            if (userManager.getUserCount()==0){
+                std::cout<<"등록된 사용자가 없습니다."<<std::endl;
+                break;
+            }
+            else{
+                userManager.displayUsers();
+                // 사용자 목록 출력 로직
+                break;
+            }
+        }
         case 7:{
             std::cout<<"평점을 입력할 영화 제목을 입력해주세요 : ";
             std::string title;

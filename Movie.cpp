@@ -47,11 +47,11 @@ bool Movie::operator>=(const Movie& o) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Movie& m) {
-    os << "ID: " << m.id << "\n"
-       << "제목: " << m.title << "\n"
-       << "장르: " << m.genre << "\n"
-       << "출시 연도: " << m.releaseYear << "\n"           
-       << "평균 평점: " << m.ratingManager.getAverageRating() << "\n"
+    os << "id: " << m.id << " "
+       << "제목: " << m.title << " "
+       << "장르: " << m.genre << " "
+       << "출시 연도: " << m.releaseYear << "\n"
+       << "평균 평점: " << m.ratingManager.getAverageRating() << " "
        << "평가 수: " << m.ratingManager.getRatingCount();
     return os;
 }

@@ -33,7 +33,7 @@ Movie* MovieManager::findMovieByTitle(const std::string& title) {
 }
 
 void MovieManager::displayMovies() const {
-    std::cout << "Movies:" << std::endl;
+    std::cout << "영화 목록" << std::endl;
     for (const auto& movie : movies) {
         std::cout << movie << std::endl;
     }
@@ -50,4 +50,13 @@ void MovieManager::displaySortedByRating() const {
     for (const auto& movie : sortedMovies) {
         std::cout << movie << " - Average Rating: " << movie.getAverageRating() << std::endl;
     }
+}
+
+bool MovieManager::alreadyExists(const std::string& title,const std::string genre,int year) const {
+    for (const auto& movie : movies) {
+        if (movie.getTitle() == title && movie.getGenre() == genre && movie.getReleaseYear() == year) {
+            return true;
+        }
+    }
+    return false;
 }
