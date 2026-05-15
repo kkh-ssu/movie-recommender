@@ -69,7 +69,7 @@ int main() {
                 break;
             }
             else{
-                movieManager.displayMovies();
+                movieManager.display();
                 break;
             }
         }
@@ -105,7 +105,7 @@ int main() {
                 break;
             }
             else{
-                userManager.displayUsers();
+                userManager.display();
                 // 사용자 목록 출력 로직
                 break;
             }
@@ -118,7 +118,7 @@ int main() {
             if (movie){
                 std::cout<<movie->getTitle()<<"의 평점을 입력합니다"<<std::endl;
                 std::cout<<"유저 목록"<<std::endl;
-                userManager.displayUsers();
+                userManager.display();
                 std::cout<<"평점을 입력할 사용자 이름을 입력해주세요 : ";
                 std::string name;
                 std::cin>>name;
@@ -153,7 +153,7 @@ int main() {
             const Movie* movie=movieManager.findMovieByTitle(title);
             if (movie){
                 std::cout<<movie->getTitle()<<"의 평점 목록"<<std::endl;
-                movie->getRatingManager().displayRatings();
+                movie->getRatingManager().display();
             }
             else{
                 std::cout<<"영화를 찾을 수 없습니다."<<std::endl;
@@ -170,7 +170,7 @@ int main() {
         }
         std::cout<<std::endl;
         std::cout<<"계속 하시려면 Enter 키를 누르세요...";
-        std::cin.ignore();
+        std::cin.ignore(); //버퍼 비우기
         std::cin.get();
         system("clear");
     }

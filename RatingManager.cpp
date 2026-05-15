@@ -1,6 +1,8 @@
 #include "Rating.hpp"
 #include "RatingManager.hpp"
 #include <iostream>
+#include <fstream>
+
 
 RatingManager::RatingManager() : totalRating(0.0), ratingCount(0), averageRating(0.0) {}
 
@@ -14,9 +16,16 @@ void RatingManager::addRating(const Rating& rating) {
 int RatingManager::getRatingCount() const { return ratingCount; }
 double RatingManager::getAverageRating() const { return averageRating; }
 
-void RatingManager::displayRatings() const {
+void RatingManager::display() const {
     for (const auto& r : ratings) {
         std::cout << "User: " << r.getUser().getName()
                   << ", Score: " << r.getScore() << std::endl;
     }
+}
+
+void RatingManager::loadFromfile() {
+}
+
+void RatingManager::saveToFile()
+{
 }

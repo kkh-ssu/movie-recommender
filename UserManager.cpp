@@ -6,7 +6,7 @@ void UserManager::addUser(const User& user) {
     users.push_back(user);
 }
 
-void UserManager::displayUsers() const {
+void UserManager::display() const {
     std::cout << "Users:" << std::endl;
     for (const auto& user : users) {
         std::cout << "ID: " << user.getId()
@@ -39,3 +39,9 @@ bool UserManager::validUser(const std::string &username) const{
 }
 
 int UserManager::getUserCount() const { return users.size(); }
+
+void UserManager::loadFromfile() {
+}
+
+void UserManager::saveToFile() {
+}

@@ -1,17 +1,21 @@
 #pragma once
 #include <vector>
+#include "BaseManager.hpp"
 #include "User.hpp"
 #include <string>
 
-class UserManager {
+class UserManager : public BaseManager {
     private:
         std::vector<User> users;
 
     public:
         void addUser(const User& user);
-        void displayUsers() const;
+        void display() const;
         int getUserCount() const ;
+        int size() const { return static_cast<int>(users.size()); }
         bool validUser(const std::string& username,const std::string& email) const;
         bool validUser(const std::string& username) const;
         const User* findUserByName(const std::string& username) const;
+        void loadFromfile();
+        void saveToFile();
 };

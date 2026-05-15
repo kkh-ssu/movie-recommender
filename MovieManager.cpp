@@ -32,7 +32,7 @@ Movie* MovieManager::findMovieByTitle(const std::string& title) {
     return nullptr;
 }
 
-void MovieManager::displayMovies() const {
+void MovieManager::display() const {
     std::cout << "영화 목록" << std::endl;
     for (const auto& movie : movies) {
         std::cout << movie << std::endl;
@@ -59,4 +59,10 @@ bool MovieManager::alreadyExists(const std::string& title,const std::string genr
         }
     }
     return false;
+}
+
+void MovieManager::loadFromfile() {
+}
+
+void MovieManager::saveToFile() {
 }
