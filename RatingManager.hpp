@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
 #include "Rating.hpp"
-#include "BaseManager.hpp"
+#include "UserManager.hpp"
 
-class RatingManager : public BaseManager {
+class RatingManager {
 private:
     std::vector<Rating> ratings;
     double totalRating;
@@ -16,6 +16,6 @@ public:
     int size() const { return static_cast<int>(ratings.size()); }
     double getAverageRating() const ;
     void display() const;
-    void loadFromfile() override;
-    void saveToFile() override;
+    void loadFromfile(UserManager& userManager);
+    void saveToFile(UserManager& userManager);
 };

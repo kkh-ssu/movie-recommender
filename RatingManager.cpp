@@ -1,6 +1,7 @@
 #include "Rating.hpp"
 #include "RatingManager.hpp"
 #include <iostream>
+#include <sstream>
 #include <fstream>
 
 
@@ -23,9 +24,39 @@ void RatingManager::display() const {
     }
 }
 
-void RatingManager::loadFromfile() {
+void RatingManager::loadFromfile(UserManager& userManager) {
+    std::ifstream ratingFile("data/ratings.csv");
+    if (!ratingFile.is_open()) {
+        std::cout << "ratings.csv를 열 수 없습니다." << std::endl;
+        return;
+    }
+    std::string line;
+    std::getline(ratingFile, line);
+
+    while (std::getline(ratingFile, line)) {
+        std::istringstream ss(line);
+        std::string userIdStr, scoreStr;
+        std::getline(ss, userIdStr, ',');
+        std::getline(ss, scoreStr, ',');
+
+        int userId = std::stoi(userIdStr);
+        double score = std::stod(scoreStr);
+
+        const User* user = userManager.findUserById(userId);
+        if (user) {
+            addRating(Rating(*user, score));
+        }
+    }
 }
 
-void RatingManager::saveToFile()
-{
+void RatingManager::saveToFile(UserManager& userManager) {
+    std::ofstream ratingFile("data/ratings.csv");
+    if (!ratingFile.is_open()) {
+        std::cout << "ratings.csv를 열 수 없습니다." << std::endl;
+        return;
+    }
+    ratingFile << "userId,score\n";
+    for (const auto& r : ratings) {
+        ratingFile << r.getUser().getId() << "," << r.getScore() << "\n";
+    }
 }

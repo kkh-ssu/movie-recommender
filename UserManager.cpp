@@ -33,6 +33,16 @@ const User* UserManager::findUserByName(const std::string& username) const {
     return nullptr;
 }
 
+const User *UserManager::findUserById(int id) const
+{
+    for (const auto& user : users) {
+        if (user.getId() == id) {
+            return &user;
+        }
+    }
+    return nullptr;
+}
+
 bool UserManager::validUser(const std::string &username) const{
     if (findUserByName(username) != nullptr) {
         return true;
