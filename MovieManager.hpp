@@ -17,6 +17,6 @@ public:
     int getMovieCount() const;
     int size() const { return static_cast<int>(movies.size()); }
     bool alreadyExists(const std::string& title,const std::string genre,int year) const;
-    void loadFromfile();
-    void saveToFile();
+    void loadFromfile() override;
+    void saveToFile() override;
 };

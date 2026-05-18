@@ -1,6 +1,8 @@
 #include "User.hpp"
 #include "UserManager.hpp"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 void UserManager::addUser(const User& user) {
     users.push_back(user);
@@ -41,7 +43,35 @@ bool UserManager::validUser(const std::string &username) const{
 int UserManager::getUserCount() const { return users.size(); }
 
 void UserManager::loadFromfile() {
+    std::ifstream userFile("data/users.csv");
+    if (!userFile.is_open()) {
+        std::cout << "users.csv를 열 수 없습니다." << std::endl;
+        return;
+    }
+    std::string line;
+    std::getline(userFile, line); 
+
+    while (std::getline(userFile, line)) {
+        std::istringstream ss(line);
+        std::string idStr, name, email;
+        std::getline(ss, idStr, ',');
+        std::getline(ss, name, ',');
+        std::getline(ss, email, ',');
+
+        int id = std::stoi(idStr);
+        addUser(User(id, name, email));
+    }
 }
 
-void UserManager::saveToFile() {
+void UserManager::saveToFile()
+{
+    std::ofstream userFile("data/users.csv");
+    if (!userFile.is_open()) {
+        std::cout << "users.csv를 열 수 없습니다." << std::endl;
+        return;
+    }
+    userFile << "id,name,email\n";
+    for (const auto& user : users) {
+        userFile << user.getId() << "," << user.getName() << "," << user.getEmail() << "\n";
+    }
 }

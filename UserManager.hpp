@@ -16,6 +16,6 @@ class UserManager : public BaseManager {
         bool validUser(const std::string& username,const std::string& email) const;
         bool validUser(const std::string& username) const;
         const User* findUserByName(const std::string& username) const;
-        void loadFromfile();
-        void saveToFile();
+        void loadFromfile() override;
+        void saveToFile() override;
 };

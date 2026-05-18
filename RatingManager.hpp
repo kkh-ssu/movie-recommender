@@ -16,6 +16,6 @@ public:
     int size() const { return static_cast<int>(ratings.size()); }
     double getAverageRating() const ;
     void display() const;
-    void loadFromfile();
-    void saveToFile();
+    void loadFromfile() override;
+    void saveToFile() override;
 };

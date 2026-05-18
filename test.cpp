@@ -2,13 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include "Movie.hpp"
-#include "User.hpp"
-#include "Rating.hpp"
 #include "MovieManager.hpp"
-#include "UserManager.hpp"
-#include "RatingManager.hpp"
 
-void loadMovies() {
+void loadMovies(MovieManager& movieManager) {
     std::ifstream movieFile("data/movies.csv");
     if (!movieFile.is_open()) {
         std::cout << "movie.csv를 열 수 없습니다." << std::endl;
@@ -34,5 +30,8 @@ void loadMovies() {
 
 
 int main(){
-
+    MovieManager movieManager;
+    movieManager.loadFromfile();
+    movieManager.display(); 
+    return 0;
 }

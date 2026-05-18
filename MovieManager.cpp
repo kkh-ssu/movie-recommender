@@ -4,6 +4,8 @@
 #include "MovieManager.hpp"
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 
 MovieManager::MovieManager()  {}
 
@@ -62,7 +64,40 @@ bool MovieManager::alreadyExists(const std::string& title,const std::string genr
 }
 
 void MovieManager::loadFromfile() {
+    std::ifstream movieFile("data/movies.csv");
+    if (!movieFile.is_open()) {
+        std::cout << "movie.csv를 열 수 없습니다." << std::endl;
+        return;
+    }
+    std::string line;
+    std::getline(movieFile, line);
+
+    while(std::getline(movieFile, line)) {
+        std::istringstream ss(line);
+        std::string idStr, title, genre, yearStr;
+        std::getline(ss, idStr, ',');
+        std::getline(ss, title, ',');
+        std::getline(ss, genre, ',');
+        std::getline(ss, yearStr, ',');
+
+        int id = std::stoi(idStr);
+        int year = std::stoi(yearStr);
+        addMovie(Movie(id, title, genre, year));
+    }
 }
 
+
 void MovieManager::saveToFile() {
+    std::ofstream movieFile("data/movies.csv");
+    if (!movieFile.is_open()) {
+        std::cout << "movie.csv를 열 수 없습니다." << std::endl;
+        return;
+    }
+    movieFile << "id,title,genre,releaseYear\n";
+    for (const auto& movie : movies) {
+        movieFile << movie.getId() << ","
+                  << movie.getTitle() << ","
+                  << movie.getGenre() << ","
+                  << movie.getReleaseYear() << "\n";
+    }
 }
