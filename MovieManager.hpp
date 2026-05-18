@@ -11,7 +11,8 @@ public:
     MovieManager();
     void addMovie(const Movie& movie);
     const Movie* findMovieByTitle(const std::string& title) const; 
-    Movie* findMovieByTitle(const std::string& title);    
+    Movie* findMovieByTitle(const std::string& title);  
+    Movie* findMovieById(int id);
     void display() const;
     void displaySortedByRating() const; 
     int getMovieCount() const;
@@ -19,4 +20,6 @@ public:
     bool alreadyExists(const std::string& title,const std::string genre,int year) const;
     void loadFromfile() override;
     void saveToFile() override;
+    void loadRatings(UserManager& userManager);
+    void saveRatings();
 };

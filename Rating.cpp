@@ -10,4 +10,3 @@ const User& Rating::getUser() const {
 double Rating::getScore() const {
     return score;
 }
-

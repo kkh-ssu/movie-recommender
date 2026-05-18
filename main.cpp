@@ -11,6 +11,11 @@
 int main() {
     MovieManager movieManager;
     UserManager userManager;
+
+    userManager.loadFromfile();
+    movieManager.loadFromfile();
+    movieManager.loadRatings(userManager); 
+
     int mode=-1;
     while(mode){
         std::cout<<"=== Movie Recommender ===\n"<<std::endl;
@@ -174,6 +179,10 @@ int main() {
         std::cin.get();
         system("clear");
     }
+
+    userManager.saveToFile();
+    movieManager.saveToFile();
+    movieManager.saveRatings(); 
 
     return 0;
 }

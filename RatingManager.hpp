@@ -13,9 +13,9 @@ public:
     RatingManager() ;
     void addRating(const Rating& rating);
     int getRatingCount() const ;
+    const std::vector<Rating>& getRatings() const;
+
     int size() const { return static_cast<int>(ratings.size()); }
     double getAverageRating() const ;
     void display() const;
-    void loadFromfile(UserManager& userManager);
-    void saveToFile(UserManager& userManager);
 };

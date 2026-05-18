@@ -101,3 +101,57 @@ void MovieManager::saveToFile() {
                   << movie.getReleaseYear() << "\n";
     }
 }
+
+Movie* MovieManager::findMovieById(int id) {
+    for (auto& movie : movies)
+        if (movie.getId() == id) return &movie;
+    return nullptr;
+}
+
+void MovieManager::loadRatings(UserManager& userManager) {
+    std::ifstream file("data/ratings.csv");
+    if (!file.is_open()) {
+        std::cout << "ratings.csv를 열 수 없습니다." << std::endl;
+        return;
+    }
+
+    std::string line;
+    std::getline(file, line); // 헤더 스킵
+
+    while (std::getline(file, line)) {
+        std::istringstream ss(line);
+        std::string userIdStr, movieIdStr, scoreStr;
+        
+        std::getline(ss, userIdStr,  ',');  // userId
+        std::getline(ss, movieIdStr, ',');  // movieId
+        std::getline(ss, scoreStr,   ',');  // score
+
+        int    userId  = std::stoi(userIdStr);
+        int    movieId = std::stoi(movieIdStr);
+        double score   = std::stod(scoreStr);
+
+        Movie*      movie = findMovieById(movieId);
+        const User* user  = userManager.findUserById(userId);
+
+        if (movie && user) {
+            movie->getRatingManager().addRating(Rating(*user, score));
+        }
+    }
+}
+
+void MovieManager::saveRatings() {
+    std::ofstream file("data/ratings.csv");
+    if (!file.is_open()) {
+        std::cout << "ratings.csv를 열 수 없습니다." << std::endl;
+        return;
+    }
+
+    file << "userId,movieId,score\n";
+    for (const auto& movie : movies) {
+        for (const auto& r : movie.getRatingManager().getRatings()) {
+            file << r.getUser().getId() << ","
+                 << movie.getId()       << ","
+                 << r.getScore()        << "\n";
+        }
+    }
+}
