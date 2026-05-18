@@ -168,6 +168,9 @@ int main() {
         }
         case 0:
             std::cout << "프로그램을 종료합니다." << std::endl;
+            userManager.saveToFile();
+            movieManager.saveToFile();
+            movieManager.saveRatings(); 
             return 0;
         default:
             std::cout << "잘못된 선택입니다. 다시 입력해주세요." << std::endl;
@@ -180,9 +183,7 @@ int main() {
         system("clear");
     }
 
-    userManager.saveToFile();
-    movieManager.saveToFile();
-    movieManager.saveRatings(); 
+
 
     return 0;
 }

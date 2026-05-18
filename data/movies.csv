@@ -1,6 +1,7 @@
-id,title,year,rating
-1,Inception,2010,8.8
-2,Parasite,2019,8.6
-3,Interstellar,2014,8.7
-4,The Matrix,1999,8.7
-5,Oldboy,2003,8.4
+id,title,genre,releaseYear
+1,Inception,2010,8
+2,Parasite,2019,8
+3,Interstellar,2014,8
+4,The Matrix,1999,8
+5,Oldboy,2003,8
+6,aaa,bbb,2020
