@@ -18,3 +18,10 @@ std::string User::getEmail() const{
     return email;
 }
 
+std::ostream &operator<<(std::ostream &os, const User &u)
+{
+    os << "id: " << u.id << " "
+       << "이름: " << u.name << " "
+       << "이메일: " << u.email;
+    return os;
+}

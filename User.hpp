@@ -16,7 +16,5 @@ class User{
         std::string getName() const;
         std::string getEmail() const;
 
-   
-
         friend std::ostream& operator<<(std::ostream& os, const User& u);
 };

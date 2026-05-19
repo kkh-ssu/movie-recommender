@@ -1,5 +1,6 @@
 #include "Rating.hpp"
 #include "RatingManager.hpp"
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -15,6 +16,10 @@ void RatingManager::addRating(const Rating& rating) {
 }
 
 int RatingManager::getRatingCount() const { return ratingCount; }
+int RatingManager::size() const
+{
+    return ratings.size();
+}
 double RatingManager::getAverageRating() const { return averageRating; }
 
 void RatingManager::display() const {
@@ -26,4 +31,10 @@ void RatingManager::display() const {
 
 const std::vector<Rating>& RatingManager::getRatings() const {
     return ratings;
+}
+
+void RatingManager::sortRatingsByUserId() {
+    std::sort(ratings.begin(), ratings.end(), [](const Rating& a, const Rating& b) {
+        return a.getUser().getId() < b.getUser().getId();
+    });
 }

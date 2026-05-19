@@ -10,12 +10,13 @@ private:
     int ratingCount;
     double averageRating;
 public:
-    RatingManager() ;
+    RatingManager();
     void addRating(const Rating& rating);
-    int getRatingCount() const ;
+    int getRatingCount() const;
     const std::vector<Rating>& getRatings() const;
+    void sortRatingsByUserId();
 
-    int size() const { return static_cast<int>(ratings.size()); }
-    double getAverageRating() const ;
+    int size() const;
+    double getAverageRating() const;
     void display() const;
 };

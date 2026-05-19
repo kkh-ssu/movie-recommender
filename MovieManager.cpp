@@ -9,6 +9,9 @@
 
 MovieManager::MovieManager()  {}
 
+std::vector<Movie> MovieManager::getMovies() const {
+    return movies;
+}
 
 int MovieManager::getMovieCount() const { return movies.size(); }
 
