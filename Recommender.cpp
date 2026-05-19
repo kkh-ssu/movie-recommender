@@ -7,7 +7,7 @@ std::vector<const Movie*> Recommender::recommend(int targetUserId,
                                                   const UserManager& userManager,
                                                   const MovieManager& movieManager,
                                                   int topN) {
-    // 1. 타겟 유저가 이미 평가한 영화 id 수집
+    // 타겟 유저가 본 영화를 set에 저장
     std::set<int> alreadySeen;
     for (const auto& movie : movieManager.getMovies()) {
         for (const auto& r : movie.getRatingManager().getRatings()) {

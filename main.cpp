@@ -22,7 +22,7 @@ int main() {
         std::cout<<"=== Movie Recommender ===\n"<<std::endl;
         std::cout<<"[ 영화 ]\n1. 영화 추가\n2. 제목으로 검색\n3. 전체 목록 출력\n4. 평점순 출력\n"<<std::endl;
         std::cout<<"[ 사용자 ]\n5. 사용자 추가\n6. 사용자 목록 출력\n"<<std::endl;
-        std::cout<<"[ 평점 ]\n7. 평점 입력\n8. 영화별 평점 보기\n"<<std::endl;
+        std::cout<<"[ 평점 ]\n7. 평점 입력\n8. 영화별 평점 보기\n9.영화 추천\n"<<std::endl;
         std::cout<<"0. 종료\n"<<std::endl;
 
         if(movieManager.getMovieCount()==0){
@@ -199,7 +199,7 @@ int main() {
         }
         std::cout<<std::endl;
         std::cout<<"계속 하시려면 Enter 키를 누르세요...";
-        std::cin.ignore(); //버퍼 비우기
+        std::cin.ignore();
         std::cin.get();
         system("clear");
     }

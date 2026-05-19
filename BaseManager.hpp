@@ -6,4 +6,5 @@ public:
     virtual int size() const = 0;
     virtual void loadFromfile() = 0;
     virtual void saveToFile() = 0;
+    virtual ~BaseManager();
 };

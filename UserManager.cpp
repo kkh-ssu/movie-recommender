@@ -4,7 +4,10 @@
 #include <fstream>
 #include <sstream>
 
-void UserManager::addUser(const User& user) {
+UserManager::~UserManager() {}
+
+void UserManager::addUser(const User &user)
+{
     users.push_back(user);
 }
 

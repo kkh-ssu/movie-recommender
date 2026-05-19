@@ -9,6 +9,7 @@ class UserManager : public BaseManager {
         std::vector<User> users;
 
     public:
+        ~UserManager();
         void addUser(const User& user);
         void display() const;
         int getUserCount() const ;

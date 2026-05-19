@@ -35,6 +35,7 @@ double SimilarityCalc::calculate(int userId1, int userId2,
     if (commonCount == 0) return 0.0; // 공통 영화 없으면 유사도 0
 
     return (commonCount * 10) - scoreDiffTotal;
+    //유사도 공식: (공통 영화 수 * 10) - 평점 차이 합
 }
 
 std::map<int, double> SimilarityCalc::calculateAll(int targetUserId,
