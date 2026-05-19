@@ -1,5 +1,4 @@
 *.out
 *.o
 test.cpp
-*.exe
-*.app
+movie_app
