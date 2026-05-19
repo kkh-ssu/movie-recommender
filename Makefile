@@ -2,41 +2,42 @@
 CXX      = g++
 CXXFLAGS = -std=c++17 -Wall -g
 TARGET   = movie_app
-OBJS = main.o Movie.o User.o Rating.o MovieManager.o UserManager.o RatingManager.o BaseManager.o SimilarityCalc.o Recommender.o
+OBJS = src/main.o src/Movie.o src/User.o src/Rating.o src/MovieManager.o src/UserManager.o src/RatingManager.o src/BaseManager.o src/SimilarityCalc.o src/Recommender.o
+
 
 
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-main.o: main.cpp Movie.hpp User.hpp Rating.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/main.o: src/main.cpp src/Movie.hpp src/User.hpp src/Rating.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-Movie.o: Movie.cpp Movie.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/Movie.o: src/Movie.cpp src/Movie.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-User.o: User.cpp User.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/User.o: src/User.cpp src/User.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-Rating.o: Rating.cpp Rating.hpp
-	$(CXX) $(CXXFLAGS) -c $<	
+src/Rating.o: src/Rating.cpp src/Rating.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-MovieManager.o: MovieManager.cpp MovieManager.hpp Movie.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/MovieManager.o: src/MovieManager.cpp src/MovieManager.hpp src/Movie.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-UserManager.o: UserManager.cpp UserManager.hpp User.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/UserManager.o: src/UserManager.cpp src/UserManager.hpp src/User.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-RatingManager.o: RatingManager.cpp RatingManager.hpp Rating.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/RatingManager.o: src/RatingManager.cpp src/RatingManager.hpp src/Rating.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-BaseManager.o: BaseManager.cpp BaseManager.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/BaseManager.o: src/BaseManager.cpp src/BaseManager.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-SimilarityCalc.o: SimilarityCalc.cpp SimilarityCalc.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/SimilarityCalc.o: src/SimilarityCalc.cpp src/SimilarityCalc.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-Recommender.o: Recommender.cpp Recommender.hpp
-	$(CXX) $(CXXFLAGS) -c $<
+src/Recommender.o: src/Recommender.cpp src/Recommender.hpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: clean run
 clean:
