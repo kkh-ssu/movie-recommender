@@ -7,6 +7,7 @@
 #include "MovieManager.hpp"
 #include "UserManager.hpp"
 #include "RatingManager.hpp"
+#include "Recommender.hpp"
 
 int main() {
     MovieManager movieManager;
@@ -165,6 +166,26 @@ int main() {
             }
             break;
 
+        }
+        case 9: {
+            std::cout << "추천받을 사용자 이름을 입력해주세요 : ";
+            std::string name;
+            std::cin >> name;
+            const User* user = userManager.findUserByName(name);
+            if (!user) { std::cout << "사용자를 찾을 수 없습니다.\n"; break; }
+
+            auto recommendations = Recommender::recommend(user->getId(),
+                                                        userManager,
+                                                        movieManager);
+            if (recommendations.empty()) {
+                std::cout << "추천할 영화가 없습니다.\n";
+            } else {
+                std::cout << user->getName() << "님을 위한 추천 영화:\n";
+                for (const auto* movie : recommendations) {
+                    std::cout << *movie << std::endl;
+                }
+            }
+            break;
         }
         case 0:
             std::cout << "프로그램을 종료합니다." << std::endl;

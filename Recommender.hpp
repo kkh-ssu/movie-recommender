@@ -1,18 +1,14 @@
 #pragma once
-
-#include "MovieManager.hpp"
 #include "UserManager.hpp"
-#include "RatingManager.hpp"
+#include "MovieManager.hpp"
+#include "SimilarityCalc.hpp"
+#include <vector>
 
 class Recommender {
-    private:
-        MovieManager& movieManager;
-        UserManager& userManager;
-        RatingManager allRatings;
-    public:
-        Recommender(MovieManager& mm, UserManager& um, RatingManager& ar) : 
-        movieManager(mm), userManager(um), allRatings(ar) {}
-        void loadRatings();
-        int similaritycalc(const User& mainUser);
-        void recommendMovies(const User& mainUser);
+public:
+    // targetUser가 보지 않은 영화 중 추천 목록 반환
+    static std::vector<const Movie*> recommend(int targetUserId,
+                                               const UserManager& userManager,
+                                               const MovieManager& movieManager,
+                                               int topN = 5);
 };

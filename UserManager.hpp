@@ -12,6 +12,7 @@ class UserManager : public BaseManager {
         void addUser(const User& user);
         void display() const;
         int getUserCount() const ;
+        const std::vector<User>& getUsers() const;
         int size() const { return static_cast<int>(users.size()); }
         bool validUser(const std::string& username,const std::string& email) const;
         bool validUser(const std::string& username) const;

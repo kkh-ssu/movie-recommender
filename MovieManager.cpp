@@ -9,7 +9,7 @@
 
 MovieManager::MovieManager()  {}
 
-std::vector<Movie> MovieManager::getMovies() const {
+const std::vector<Movie>& MovieManager::getMovies() const {
     return movies;
 }
 

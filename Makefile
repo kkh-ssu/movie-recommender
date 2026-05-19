@@ -2,7 +2,7 @@
 CXX      = g++
 CXXFLAGS = -std=c++17 -Wall -g
 TARGET   = movie_app
-OBJS = main.o Movie.o User.o Rating.o MovieManager.o UserManager.o RatingManager.o
+OBJS = main.o Movie.o User.o Rating.o MovieManager.o UserManager.o RatingManager.o SimilarityCalc.o Recommender.o
 
 
 $(TARGET): $(OBJS)
@@ -27,6 +27,12 @@ UserManager.o: UserManager.cpp UserManager.hpp User.hpp
 	$(CXX) $(CXXFLAGS) -c $<
 
 RatingManager.o: RatingManager.cpp RatingManager.hpp Rating.hpp
+	$(CXX) $(CXXFLAGS) -c $<
+
+SimilarityCalc.o: SimilarityCalc.cpp SimilarityCalc.hpp
+	$(CXX) $(CXXFLAGS) -c $<
+
+Recommender.o: Recommender.cpp Recommender.hpp
 	$(CXX) $(CXXFLAGS) -c $<
 
 .PHONY: clean run

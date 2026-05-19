@@ -9,7 +9,7 @@ private:
     std::vector<Movie> movies;
 public:
     MovieManager();
-    std::vector<Movie> getMovies() const;
+    const std::vector<Movie>& getMovies() const;
     void addMovie(const Movie& movie);
     const Movie* findMovieByTitle(const std::string& title) const; 
     Movie* findMovieByTitle(const std::string& title);  

@@ -52,6 +52,10 @@ bool UserManager::validUser(const std::string &username) const{
 
 int UserManager::getUserCount() const { return users.size(); }
 
+const std::vector<User> &UserManager::getUsers() const {
+    return users; 
+}
+
 void UserManager::loadFromfile() {
     std::ifstream userFile("data/users.csv");
     if (!userFile.is_open()) {
