@@ -19,6 +19,18 @@ const std::vector<Movie>& MovieManager::getMovies() const {
 
 int MovieManager::getMovieCount() const { return movies.size(); }
 
+int MovieManager::getUserRatingCount(int userId) const {
+    int count = 0;
+    for (const auto& movie : movies) {
+        for (const auto& rating : movie.getRatingManager().getRatings()) {
+            if (rating.getUser().getId() == userId) {
+                ++count;
+            }
+        }
+    }
+    return count;
+}
+
 void MovieManager::addMovie(const Movie& movie) {
     movies.push_back(movie);
 }

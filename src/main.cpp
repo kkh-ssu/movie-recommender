@@ -40,6 +40,10 @@ int main() {
             std::cout<<"추가 할 영화 제목을 입력해주세요 : ";
             std::string title;
             std::cin>>title;
+            if (title.find(',') != std::string::npos) {
+                std::cout<<"',' 대신 '.'으로 입력해주세요"<<std::endl;
+                break;
+            }
             std::cout<<"추가 할 영화 장르를 입력해주세요 : ";
             std::string genre;
             std::cin>>genre;
@@ -173,6 +177,11 @@ int main() {
             std::cin >> name;
             const User* user = userManager.findUserByName(name);
             if (!user) { std::cout << "사용자를 찾을 수 없습니다.\n"; break; }
+
+            if (movieManager.getUserRatingCount(user->getId()) == 0) {
+                std::cout << "평점이 없는 사용자는 영화 추천을 받을 수 없습니다." << std::endl;
+                break;
+            }
 
             auto recommendations = Recommender::recommend(user->getId(),
                                                         userManager,

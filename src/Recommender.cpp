@@ -3,10 +3,25 @@
 #include <algorithm>
 #include <set>
 
+static int countUserRatings(int targetUserId, const MovieManager& movieManager) {
+    int count = 0;
+    for (const auto& movie : movieManager.getMovies()) {
+        for (const auto& rating : movie.getRatingManager().getRatings()) {
+            if (rating.getUser().getId() == targetUserId) {
+                ++count;
+            }
+        }
+    }
+    return count;
+}
+
 std::vector<const Movie*> Recommender::recommend(int targetUserId,
                                                   const UserManager& userManager,
                                                   const MovieManager& movieManager,
-                                                  int topN) {
+                                                  int topN) { //topN(추천 영화 최대 개수)=5
+    if (countUserRatings(targetUserId, movieManager) == 0) {
+        return {};
+    }
     // 타겟 유저가 본 영화를 set에 저장
     std::set<int> alreadySeen;
     for (const auto& movie : movieManager.getMovies()) {
@@ -17,7 +32,7 @@ std::vector<const Movie*> Recommender::recommend(int targetUserId,
         }
     }
 
-    // 2. 모든 유저와 유사도 계산 후 내림차순 정렬
+    //모든 유저와 유사도 계산 후 내림차순 정렬
     auto similarityMap = SimilarityCalc::calculateAll(targetUserId,
                                                       userManager,
                                                       movieManager);
@@ -28,7 +43,7 @@ std::vector<const Movie*> Recommender::recommend(int targetUserId,
                   return a.second > b.second; // 유사도 높은 순
               });
 
-    // 3. 유사한 유저 순서대로 안 본 영화 수집 (중복 제거)
+    // 유사한 유저 순서대로 안 본 영화 수집 (중복 제거)
     std::set<int>             addedMovieIds;
     std::vector<const Movie*> recommendations;
 

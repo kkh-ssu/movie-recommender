@@ -18,6 +18,7 @@ public:
     void display() const;
     void displaySortedByRating() const; 
     int getMovieCount() const;
+    int getUserRatingCount(int userId) const;
     int size() const { return static_cast<int>(movies.size()); }
     bool alreadyExists(const std::string& title,const std::string genre,int year) const;
     void loadFromfile() override;
