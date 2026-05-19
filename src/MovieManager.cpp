@@ -73,7 +73,7 @@ void MovieManager::displaySortedByRating() const {
     }
 }
 
-bool MovieManager::alreadyExists(const std::string& title,const std::string genre,int year) const {
+bool MovieManager::alreadyExists(const std::string& title,const std::string& genre,int year) const {
     for (const auto& movie : movies) {
         if (movie.getTitle() == title && movie.getGenre() == genre && movie.getReleaseYear() == year) {
             return true;

@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "Rating.hpp"
-#include "UserManager.hpp"
 
 class RatingManager {
 private:
