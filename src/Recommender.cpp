@@ -3,36 +3,24 @@
 #include <algorithm>
 #include <set>
 
-static int countUserRatings(int targetUserId, const MovieManager& movieManager) {
-    int count = 0;
-    for (const auto& movie : movieManager.getMovies()) {
-        for (const auto& rating : movie.getRatingManager().getRatings()) {
-            if (rating.getUser().getId() == targetUserId) {
-                ++count;
-            }
-        }
-    }
-    return count;
-}
-
 std::vector<const Movie*> Recommender::recommend(int targetUserId,
                                                   const UserManager& userManager,
                                                   const MovieManager& movieManager,
-                                                  int topN) { //topN(추천 영화 최대 개수)=5
-    if (countUserRatings(targetUserId, movieManager) == 0) {
+                                                  int topN) {
+    // 기존: O(M×R) 이중 루프로 평점 수 확인
+    // 개선: O(1) 인덱스 조회
+    if (movieManager.getUserRatingCount(targetUserId) == 0) {
         return {};
     }
-    // 타겟 유저가 본 영화를 set에 저장
+
+    // 기존: 전체 영화 순회하며 targetUser 평점 찾아 alreadySeen 구축 — O(M×R)
+    // 개선: getUserRatings()로 O(1) 조회
     std::set<int> alreadySeen;
-    for (const auto& movie : movieManager.getMovies()) {
-        for (const auto& r : movie.getRatingManager().getRatings()) {
-            if (r.getUser().getId() == targetUserId) {
-                alreadySeen.insert(movie.getId());
-            }
-        }
+    for (const auto& [movieId, score] : movieManager.getUserRatings(targetUserId)) {
+        alreadySeen.insert(movieId);
     }
 
-    //모든 유저와 유사도 계산 후 내림차순 정렬
+    // 유사도 계산 후 내림차순 정렬 (변경 없음 — calculate() 자체가 빨라짐)
     auto similarityMap = SimilarityCalc::calculateAll(targetUserId,
                                                       userManager,
                                                       movieManager);
@@ -40,32 +28,35 @@ std::vector<const Movie*> Recommender::recommend(int targetUserId,
                                                similarityMap.end());
     std::sort(sorted.begin(), sorted.end(),
               [](const auto& a, const auto& b) {
-                  return a.second > b.second; // 유사도 높은 순
+                  return a.second > b.second;
               });
 
-    // 유사한 유저 순서대로 안 본 영화 수집 (중복 제거)
+    // 유사 유저 순서로 안 본 영화 수집
+    // 기존: movie.getRatingManager().getRatings() 순회 — O(M×R) per 유저
+    // 개선: getUserRatings(similarUserId)로 O(1) 조회 후 movieId set으로 확인
     std::set<int>             addedMovieIds;
     std::vector<const Movie*> recommendations;
 
     for (const auto& [similarUserId, similarity] : sorted) {
-        if (similarity <= 0) continue; // 유사도 0 이하 제외
+        if (similarity <= 0) continue;
 
-        for (const auto& movie : movieManager.getMovies()) {
-            if (alreadySeen.count(movie.getId())) continue;  // 이미 본 영화
-            if (addedMovieIds.count(movie.getId())) continue; // 이미 추천한 영화
+        const auto& similarUserRatings =
+            movieManager.getUserRatings(similarUserId); // O(1)
 
-            // 해당 유저가 이 영화를 평가했는지 확인
-            for (const auto& r : movie.getRatingManager().getRatings()) {
-                if (r.getUser().getId() == similarUserId) {
-                    recommendations.push_back(&movie);
-                    addedMovieIds.insert(movie.getId());
-                    break;
-                }
-            }
+        for (const auto& [movieId, score] : similarUserRatings) {
+            if (alreadySeen.count(movieId))   continue; // 이미 본 영화
+            if (addedMovieIds.count(movieId)) continue; // 이미 추천한 영화
 
-            if ((int)recommendations.size() >= topN) break;
+            // movieId로 Movie* 조회 — O(1)
+            const Movie* movie = movieManager.findMovieById(movieId);
+            if (!movie) continue;
+
+            recommendations.push_back(movie);
+            addedMovieIds.insert(movieId);
+
+            if (static_cast<int>(recommendations.size()) >= topN) break;
         }
-        if ((int)recommendations.size() >= topN) break;
+        if (static_cast<int>(recommendations.size()) >= topN) break;
     }
 
     return recommendations;
