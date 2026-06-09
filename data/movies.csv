@@ -1,8 +1,38 @@
 id,title,genre,releaseYear
-1,Inception,2010,8
-2,Parasite,2019,8
-3,Interstellar,2014,8
-4,The Matrix,1999,8
-5,Oldboy,2003,8
-6,aaa,bbb,2020
-7,asdf,asdf,2020
+1,Inception,SF,2010
+2,Parasite,Thriller,2019
+3,Interstellar,SF,2014
+4,The Matrix,SF,1999
+5,Oldboy,Thriller,2003
+6,The Godfather,Crime,1972
+7,Schindler's List,Drama,1993
+8,The Dark Knight,Action,2008
+9,Forrest Gump,Drama,1994
+10,The Silence of the Lambs,Thriller,1991
+11,Pulp Fiction,Crime,1994
+12,The Shawshank Redemption,Drama,1994
+13,Spirited Away,Animation,2001
+14,Your Name,Animation,2016
+15,La La Land,Romance,2016
+16,Whiplash,Drama,2014
+17,1917,War,2019
+18,Joker,Drama,2019
+19,Avengers: Endgame,Action,2019
+20,Spider-Man: Into the Spider-Verse,Animation,2018
+21,Get Out,Horror,2017
+22,Mad Max: Fury Road,Action,2015
+23,Arrival,SF,2016
+24,Her,SF,2013
+25,Gone Girl,Thriller,2014
+26,The Grand Budapest Hotel,Comedy,2014
+27,Knives Out,Mystery,2019
+28,Dunkirk,War,2017
+29,Hereditary,Horror,2018
+30,Everything Everywhere All at Once,SF,2022
+31,Tár,Drama,2022
+32,The Banshees of Inisherin,Drama,2022
+33,Aftersun,Drama,2022
+34,All Quiet on the Western Front,War,2022
+35,RRR,Action,2022
+36,Triangle of Sadness,Comedy,2022
+37,The Fabelmans,Drama,2022
