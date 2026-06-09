@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
+#include <iomanip>
 #include "Movie.hpp"
 #include "User.hpp"
 #include "Rating.hpp"
@@ -239,7 +240,7 @@ int main() {
             std::cout << "\n[" << selectedGenre << "] 장르 평점 TOP" << showCount << "\n";
             for (int i = 0; i < showCount; ++i) {
                 std::cout << i + 1 << ". " << candidates[i]->getTitle()
-                          << "  (평균 평점: " << candidates[i]->getAverageRating()
+                          << "  (평균 평점: " << std::fixed << std::setprecision(1) << candidates[i]->getAverageRating()
                           << ")\n";
             }
             break;

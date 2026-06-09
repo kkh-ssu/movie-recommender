@@ -2,37 +2,38 @@
 #include "RatingManager.hpp"
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <fstream>
-
-
+ 
+ 
 RatingManager::RatingManager() : totalRating(0.0), ratingCount(0), averageRating(0.0) {}
-
+ 
 void RatingManager::addRating(const Rating& rating) {
     ratings.push_back(rating);
     totalRating += rating.getScore();
     ratingCount++;
     averageRating = totalRating / ratingCount;
 }
-
+ 
 int RatingManager::getRatingCount() const { return ratingCount; }
 int RatingManager::size() const
 {
     return ratings.size();
 }
 double RatingManager::getAverageRating() const { return averageRating; }
-
+ 
 void RatingManager::display() const {
     for (const auto& r : ratings) {
         std::cout << "User: " << r.getUser().getName()
-                  << ", Score: " << r.getScore() << std::endl;
+                  << ", Score: " << std::fixed << std::setprecision(1) << r.getScore() << std::endl;
     }
 }
-
+ 
 const std::vector<Rating>& RatingManager::getRatings() const {
     return ratings;
 }
-
+ 
 void RatingManager::sortRatingsByUserId() {
     std::sort(ratings.begin(), ratings.end(), [](const Rating& a, const Rating& b) {
         return a.getUser().getId() < b.getUser().getId();
