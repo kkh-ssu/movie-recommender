@@ -4,6 +4,7 @@
 #include "SimilarityCalc.hpp"
 #include "Constants.hpp"
 #include <vector>
+#include <set>
  
 class Recommender {
 public:
@@ -19,5 +20,7 @@ private:
     static std::vector<const Movie*> recommendByAverage(
                                                const MovieManager& movieManager,
                                                int topN = DEFAULT_AVERAGE_RECOMMEND_COUNT);
+
+    static std::set<int> buildAlreadySeenSet(int targetUserId, const MovieManager& movieManager);
 };
  
