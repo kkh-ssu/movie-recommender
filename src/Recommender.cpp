@@ -28,7 +28,15 @@ std::vector<const Movie*> Recommender::recommendByAverage(
  
     return candidates;
 }
- 
+
+std::set<int> Recommender::buildAlreadySeenSet(int targetUserId, const MovieManager &movieManager)
+{
+    std::set<int> alreadySeen;
+    for (const auto& [movieId, score] : movieManager.getUserRatings(targetUserId))
+        alreadySeen.insert(movieId);
+    return alreadySeen;
+}
+
 // ── recommend ─────────────────────────────────────────────────────────────────
 std::vector<const Movie*> Recommender::recommend(int targetUserId,
                                                   const UserManager& userManager,
@@ -44,9 +52,7 @@ std::vector<const Movie*> Recommender::recommend(int targetUserId,
     }
  
     // 대상 유저가 이미 본 영화 수집
-    std::set<int> alreadySeen;
-    for (const auto& [movieId, score] : movieManager.getUserRatings(targetUserId))
-        alreadySeen.insert(movieId);
+    std::set<int> alreadySeen = buildAlreadySeenSet(targetUserId, movieManager);
  
     // 모든 유저와 유사도 계산 후 내림차순 정렬
     auto similarityMap = SimilarityCalc::calculateAll(targetUserId,
