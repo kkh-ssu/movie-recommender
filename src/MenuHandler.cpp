@@ -68,16 +68,18 @@ static void paginate(const std::vector<T>& items,
     while (true) {
         int start = page * PAGE_SIZE;
         int end   = std::min(start + PAGE_SIZE, total);
-
+        //헤더
         std::cout << "\n" << header
                   << "  [" << (page + 1) << "/" << totalPages << "페이지"
                   << ", 총 " << total << "개]\n";
         std::cout << std::string(50, '-') << "\n";
-
+        //헤더============================================================
+        //목록
         for (int i = start; i < end; ++i)
             printItem(i + 1, items[i]);
 
         std::cout << std::string(50, '-') << "\n";
+        //목록============================================================
 
         // 네비게이션 안내
         bool hasPrev = (page > 0);
@@ -94,7 +96,7 @@ static void paginate(const std::vector<T>& items,
         } else {
             std::cout << "[n: 다음 / p: 이전 / 그 외: 종료] > ";
         }
-
+        //네비게이션 안내 ============================================================
         std::string cmd;
         std::getline(std::cin, cmd);
 
