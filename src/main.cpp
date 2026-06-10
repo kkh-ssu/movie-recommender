@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
-#include <cstdlib>
 #include <algorithm>
 #include <iomanip>
+#include <cstdlib>
 #include "Movie.hpp"
 #include "User.hpp"
 #include "Rating.hpp"
@@ -12,226 +12,48 @@
 #include "Recommender.hpp"
 #include "Constants.hpp"
  
+// ── 메뉴 핸들러 전방 선언 ────────────────────────────────────────────────────
+static void handleAddMovie       (MovieManager&, UserManager&);
+static void handleSearchMovie    (MovieManager&);
+static void handleListMovies     (MovieManager&);
+static void handleListByRating   (MovieManager&);
+static void handleAddUser        (UserManager&);
+static void handleListUsers      (UserManager&);
+static void handleAddRating      (MovieManager&, UserManager&);
+static void handleShowRatings    (MovieManager&);
+static void handleRecommend      (MovieManager&, UserManager&);
+static void handleGenreTopN      (MovieManager&);
+static void printMenu();
+static void printWarnings        (const MovieManager&, const UserManager&);
+ 
+// ── main ──────────────────────────────────────────────────────────────────────
 int main() {
     MovieManager movieManager;
-    UserManager userManager;
+    UserManager  userManager;
  
     userManager.loadFromfile();
     movieManager.loadFromfile();
     movieManager.loadRatings(userManager);
  
-    int mode = 0;   // 초기값 0: 루프 첫 진입 시 메뉴 표시 후 입력 대기
+    int mode = 0;
     while (true) {
-        std::cout << "=== Movie Recommender ===\n" << std::endl;
-        std::cout << "[ 영화 ]\n1. 영화 추가\n2. 제목으로 검색\n3. 전체 목록 출력\n4. 평점순 출력\n" << std::endl;
-        std::cout << "[ 사용자 ]\n5. 사용자 추가\n6. 사용자 목록 출력\n" << std::endl;
-        std::cout << "[ 평점 ]\n7. 평점 입력\n8. 영화별 평점 보기\n9.영화 추천\n10. 장르별 TOP3 추천\n" << std::endl;
-        std::cout << "0. 종료\n" << std::endl;
- 
-        if (movieManager.getMovieCount() == 0) {
-            std::cout << "경고: 등록된 영화가 없습니다. 영화를 추가해주세요.\n" << std::endl;
-        }
-        if (userManager.getUserCount() == 0) {
-            std::cout << "경고: 등록된 사용자가 없습니다. 사용자를 추가해주세요.\n" << std::endl;
-        }
+        printMenu();
+        printWarnings(movieManager, userManager);
  
         std::cout << "선택 >";
         std::cin >> mode;
  
         switch (mode) {
-        case 1: {
-            std::cout << "추가 할 영화 제목을 입력해주세요 : ";
-            std::string title;
-            std::cin >> title;
-            if (title.find('|') != std::string::npos) {
-                std::cout << "'|' 는 사용할 수 없습니다. 다른 문자로 입력해주세요" << std::endl;
-                break;
-            }
-            std::cout << "추가 할 영화 장르를 입력해주세요 : ";
-            std::string genre;
-            std::cin >> genre;
-            std::cout << "추가 할 영화 출시 연도를 입력해주세요 : ";
-            int year;
-            std::cin >> year;
-            if (movieManager.alreadyExists(title, genre, year)) {
-                std::cout << "이미 존재하는 영화입니다." << std::endl;
-                break;
-            } else {
-                movieManager.addMovie(Movie(movieManager.getMovieCount() + 1, title, genre, year));
-                std::cout << "영화가 추가되었습니다." << std::endl;
-            }
-            break;
-        }
-        case 2: {
-            std::cout << "검색 할 영화 제목을 입력해주세요 : ";
-            std::string title;
-            std::cin >> title;
-            const Movie* found = movieManager.findMovieByTitle(title);
-            if (found) {
-                std::cout << *found << std::endl;
-            } else {
-                std::cout << "영화를 찾을 수 없습니다." << std::endl;
-            }
-            break;
-        }
-        case 3: {
-            if (movieManager.getMovieCount() == 0) {
-                std::cout << "등록된 영화가 없습니다." << std::endl;
-                break;
-            } else {
-                movieManager.display();
-                break;
-            }
-        }
-        case 4: {
-            if (movieManager.getMovieCount() == 0) {
-                std::cout << "등록된 영화가 없습니다." << std::endl;
-                break;
-            } else {
-                movieManager.displaySortedByRating();
-                break;
-            }
-        }
-        case 5: {
-            std::cout << "추가 할 사용자 이름을 입력해주세요 : ";
-            std::string name;
-            std::cin >> name;
-            std::cout << "추가 할 사용자 이메일을 입력해주세요 : ";
-            std::string email;
-            std::cin >> email;
-            if (userManager.validUser(name, email)) {
-                std::cout << "이미 존재하는 사용자입니다." << std::endl;
-            } else {
-                userManager.addUser(User(userManager.getUserCount() + 1, name, email));
-                std::cout << "사용자가 추가되었습니다." << std::endl;
-            }
-            break;
-        }
-        case 6: {
-            if (userManager.getUserCount() == 0) {
-                std::cout << "등록된 사용자가 없습니다." << std::endl;
-                break;
-            } else {
-                userManager.display();
-                break;
-            }
-        }
-        case 7: {
-            std::cout << "평점을 입력할 영화 제목을 입력해주세요 : ";
-            std::string title;
-            std::cin >> title;
-            Movie* movie = movieManager.findMovieByTitle(title);
-            if (movie) {
-                std::cout << movie->getTitle() << "의 평점을 입력합니다" << std::endl;
-                std::cout << "유저 목록" << std::endl;
-                userManager.display();
-                std::cout << "평점을 입력할 사용자 이름을 입력해주세요 : ";
-                std::string name;
-                std::cin >> name;
-                if (userManager.validUser(name)) {
-                    std::cout << "평점을 입력해주세요 (" << MIN_SCORE << " ~ " << MAX_SCORE << ") : ";
-                    double score;
-                    std::cin >> score;
-                    const User* user = userManager.findUserByName(name);
-                    if (score >= MIN_SCORE && score <= MAX_SCORE) {
-                        movie->getRatingManager().addRating(Rating(*user, score));
-                        std::cout << "평점이 입력되었습니다." << std::endl;
-                    } else {
-                        std::cout << "잘못된 평점입니다." << std::endl;
-                    }
-                } else {
-                    std::cout << "사용자를 찾을 수 없습니다." << std::endl;
-                }
-            } else {
-                std::cout << "영화를 찾을 수 없습니다." << std::endl;
-            }
-            break;
-        }
-        case 8: {
-            std::cout << "평점을 볼 영화 제목을 입력해주세요 : ";
-            std::string title;
-            std::cin >> title;
-            const Movie* movie = movieManager.findMovieByTitle(title);
-            if (movie) {
-                std::cout << movie->getTitle() << "의 평점 목록" << std::endl;
-                movie->getRatingManager().display();
-            } else {
-                std::cout << "영화를 찾을 수 없습니다." << std::endl;
-            }
-            break;
-        }
-        case 9: {
-            std::cout << "추천받을 사용자 이름을 입력해주세요 : ";
-            std::string name;
-            std::cin >> name;
-            const User* user = userManager.findUserByName(name);
-            if (!user) { std::cout << "사용자를 찾을 수 없습니다.\n"; break; }
- 
-            auto recommendations = Recommender::recommend(user->getId(),
-                                                          userManager,
-                                                          movieManager);
-            if (recommendations.empty()) {
-                std::cout << "추천할 영화가 없습니다.\n";
-            } else {
-                std::cout << user->getName() << "님을 위한 추천 영화:\n";
-                for (const auto* movie : recommendations) {
-                    std::cout << *movie << std::endl;
-                }
-            }
-            break;
-        }
-        case 10: {
-            // 1) 데이터에 존재하는 장르를 중복 없이 수집 후 번호 출력
-            const auto& movies = movieManager.getMovies();
-            std::vector<std::string> genres;
-            for (const auto& m : movies) {
-                const std::string& g = m.getGenre();
-                if (std::find(genres.begin(), genres.end(), g) == genres.end())
-                    genres.push_back(g);
-            }
- 
-            std::cout << "=== 장르 목록 ===\n";
-            for (int i = 0; i < static_cast<int>(genres.size()); ++i)
-                std::cout << i + 1 << ". " << genres[i] << "\n";
- 
-            // 2) 번호 입력
-            std::cout << "확인하고 싶은 장르 번호를 입력하세요 > ";
-            int genreNum;
-            std::cin >> genreNum;
- 
-            if (genreNum < 1 || genreNum > static_cast<int>(genres.size())) {
-                std::cout << "잘못된 번호입니다.\n";
-                break;
-            }
-            const std::string& selectedGenre = genres[genreNum - 1];
- 
-            // 3) 해당 장르 영화 수집 후 평균 평점 내림차순 정렬
-            std::vector<const Movie*> candidates;
-            for (const auto& m : movies) {
-                if (m.getGenre() == selectedGenre && m.getAverageRating() > MIN_SCORE)
-                    candidates.push_back(&m);
-            }
- 
-            if (candidates.empty()) {
-                std::cout << "[" << selectedGenre << "] 장르에 평점이 있는 영화가 없습니다.\n";
-                break;
-            }
- 
-            std::sort(candidates.begin(), candidates.end(),
-                      [](const Movie* a, const Movie* b) {
-                          return a->getAverageRating() > b->getAverageRating();
-                      });
- 
-            // 4) TOP_GENRE_COUNT 출력
-            int showCount = std::min(TOP_GENRE_COUNT, static_cast<int>(candidates.size()));
-            std::cout << "\n[" << selectedGenre << "] 장르 평점 TOP" << showCount << "\n";
-            for (int i = 0; i < showCount; ++i) {
-                std::cout << i + 1 << ". " << candidates[i]->getTitle()
-                          << "  (평균 평점: " << std::fixed << std::setprecision(RATING_PRECISION)
-                          << candidates[i]->getAverageRating() << ")\n";
-            }
-            break;
-        }
+        case 1:  handleAddMovie    (movieManager, userManager); break;
+        case 2:  handleSearchMovie (movieManager);              break;
+        case 3:  handleListMovies  (movieManager);              break;
+        case 4:  handleListByRating(movieManager);              break;
+        case 5:  handleAddUser     (userManager);               break;
+        case 6:  handleListUsers   (userManager);               break;
+        case 7:  handleAddRating   (movieManager, userManager); break;
+        case 8:  handleShowRatings (movieManager);              break;
+        case 9:  handleRecommend   (movieManager, userManager); break;
+        case 10: handleGenreTopN   (movieManager);              break;
         case 0:
             std::cout << "프로그램을 종료합니다." << std::endl;
             userManager.saveToFile();
@@ -243,12 +65,235 @@ int main() {
             break;
         }
  
-        std::cout << std::endl;
-        std::cout << "계속 하시려면 Enter 키를 누르세요...";
+        std::cout << "\n계속 하시려면 Enter 키를 누르세요...";
         std::cin.ignore();
         std::cin.get();
         system("clear");
     }
+}
  
-    return 0;
+// ── 메뉴 출력 ─────────────────────────────────────────────────────────────────
+static void printMenu() {
+    std::cout << "=== Movie Recommender ===\n\n";
+    std::cout << "[ 영화 ]\n"
+              << "1. 영화 추가\n"
+              << "2. 제목으로 검색\n"
+              << "3. 전체 목록 출력\n"
+              << "4. 평점순 출력\n\n";
+    std::cout << "[ 사용자 ]\n"
+              << "5. 사용자 추가\n"
+              << "6. 사용자 목록 출력\n\n";
+    std::cout << "[ 평점 ]\n"
+              << "7. 평점 입력\n"
+              << "8. 영화별 평점 보기\n"
+              << "9. 영화 추천\n"
+              << "10. 장르별 TOP" << TOP_GENRE_COUNT << " 추천\n\n";
+    std::cout << "0. 종료\n\n";
+}
+ 
+// ── 경고 출력 ─────────────────────────────────────────────────────────────────
+static void printWarnings(const MovieManager& mm, const UserManager& um) {
+    if (mm.getMovieCount() == 0)
+        std::cout << "경고: 등록된 영화가 없습니다. 영화를 추가해주세요.\n\n";
+    if (um.getUserCount() == 0)
+        std::cout << "경고: 등록된 사용자가 없습니다. 사용자를 추가해주세요.\n\n";
+}
+ 
+// ── 1. 영화 추가 ──────────────────────────────────────────────────────────────
+static void handleAddMovie(MovieManager& mm, UserManager&) {
+    std::string title;
+    std::cout << "추가 할 영화 제목을 입력해주세요 : ";
+    std::cin >> title;
+ 
+    // '|'는 CSV 구분자로 사용 중이므로 입력 불가
+    if (title.find('|') != std::string::npos) {
+        std::cout << "'|' 는 사용할 수 없습니다. 다른 문자로 입력해주세요\n";
+        return;
+    }
+ 
+    std::string genre;
+    std::cout << "추가 할 영화 장르를 입력해주세요 : ";
+    std::cin >> genre;
+ 
+    int year;
+    std::cout << "추가 할 영화 출시 연도를 입력해주세요 : ";
+    std::cin >> year;
+ 
+    if (mm.alreadyExists(title, genre, year)) {
+        std::cout << "이미 존재하는 영화입니다.\n";
+        return;
+    }
+ 
+    mm.addMovie(Movie(mm.getMovieCount() + 1, title, genre, year));
+    std::cout << "영화가 추가되었습니다.\n";
+}
+ 
+// ── 2. 제목으로 검색 ──────────────────────────────────────────────────────────
+static void handleSearchMovie(MovieManager& mm) {
+    std::string title;
+    std::cout << "검색 할 영화 제목을 입력해주세요 : ";
+    std::cin >> title;
+ 
+    const Movie* found = mm.findMovieByTitle(title);
+    if (found)
+        std::cout << *found << std::endl;
+    else
+        std::cout << "영화를 찾을 수 없습니다.\n";
+}
+ 
+// ── 3. 전체 목록 출력 ─────────────────────────────────────────────────────────
+static void handleListMovies(MovieManager& mm) {
+    if (mm.getMovieCount() == 0) {
+        std::cout << "등록된 영화가 없습니다.\n";
+        return;
+    }
+    mm.display();
+}
+ 
+// ── 4. 평점순 출력 ────────────────────────────────────────────────────────────
+static void handleListByRating(MovieManager& mm) {
+    if (mm.getMovieCount() == 0) {
+        std::cout << "등록된 영화가 없습니다.\n";
+        return;
+    }
+    mm.displaySortedByRating();
+}
+ 
+// ── 5. 사용자 추가 ────────────────────────────────────────────────────────────
+static void handleAddUser(UserManager& um) {
+    std::string name, email;
+    std::cout << "추가 할 사용자 이름을 입력해주세요 : ";
+    std::cin >> name;
+    std::cout << "추가 할 사용자 이메일을 입력해주세요 : ";
+    std::cin >> email;
+ 
+    if (um.validUser(name, email)) {
+        std::cout << "이미 존재하는 사용자입니다.\n";
+        return;
+    }
+ 
+    um.addUser(User(um.getUserCount() + 1, name, email));
+    std::cout << "사용자가 추가되었습니다.\n";
+}
+ 
+// ── 6. 사용자 목록 출력 ───────────────────────────────────────────────────────
+static void handleListUsers(UserManager& um) {
+    if (um.getUserCount() == 0) {
+        std::cout << "등록된 사용자가 없습니다.\n";
+        return;
+    }
+    um.display();
+}
+ 
+// ── 7. 평점 입력 ──────────────────────────────────────────────────────────────
+static void handleAddRating(MovieManager& mm, UserManager& um) {
+    std::string title;
+    std::cout << "평점을 입력할 영화 제목을 입력해주세요 : ";
+    std::cin >> title;
+ 
+    Movie* movie = mm.findMovieByTitle(title);
+    if (!movie) { std::cout << "영화를 찾을 수 없습니다.\n"; return; }
+ 
+    std::cout << movie->getTitle() << "의 평점을 입력합니다\n";
+    um.display();
+ 
+    std::string name;
+    std::cout << "평점을 입력할 사용자 이름을 입력해주세요 : ";
+    std::cin >> name;
+ 
+    if (!um.validUser(name)) { std::cout << "사용자를 찾을 수 없습니다.\n"; return; }
+ 
+    double score;
+    std::cout << "평점을 입력해주세요 (" << MIN_SCORE << " ~ " << MAX_SCORE << ") : ";
+    std::cin >> score;
+ 
+    if (score < MIN_SCORE || score > MAX_SCORE) {
+        std::cout << "잘못된 평점입니다.\n";
+        return;
+    }
+ 
+    const User* user = um.findUserByName(name);
+    movie->getRatingManager().addRating(Rating(*user, score));
+    std::cout << "평점이 입력되었습니다.\n";
+}
+ 
+// ── 8. 영화별 평점 보기 ───────────────────────────────────────────────────────
+static void handleShowRatings(MovieManager& mm) {
+    std::string title;
+    std::cout << "평점을 볼 영화 제목을 입력해주세요 : ";
+    std::cin >> title;
+ 
+    const Movie* movie = mm.findMovieByTitle(title);
+    if (!movie) { std::cout << "영화를 찾을 수 없습니다.\n"; return; }
+ 
+    std::cout << movie->getTitle() << "의 평점 목록\n";
+    movie->getRatingManager().display();
+}
+ 
+// ── 9. 영화 추천 ──────────────────────────────────────────────────────────────
+static void handleRecommend(MovieManager& mm, UserManager& um) {
+    std::string name;
+    std::cout << "추천받을 사용자 이름을 입력해주세요 : ";
+    std::cin >> name;
+ 
+    const User* user = um.findUserByName(name);
+    if (!user) { std::cout << "사용자를 찾을 수 없습니다.\n"; return; }
+ 
+    auto recommendations = Recommender::recommend(user->getId(), um, mm);
+    if (recommendations.empty()) {
+        std::cout << "추천할 영화가 없습니다.\n";
+        return;
+    }
+ 
+    std::cout << user->getName() << "님을 위한 추천 영화:\n";
+    for (const auto* movie : recommendations)
+        std::cout << *movie << std::endl;
+}
+ 
+// ── 10. 장르별 TOP N 추천 ────────────────────────────────────────────────────
+static void handleGenreTopN(MovieManager& mm) {
+    const auto& movies = mm.getMovies();
+ 
+    // 중복 없이 장르 수집 후 번호 출력
+    std::vector<std::string> genres;
+    for (const auto& m : movies) {
+        if (std::find(genres.begin(), genres.end(), m.getGenre()) == genres.end())
+            genres.push_back(m.getGenre());
+    }
+    std::cout << "=== 장르 목록 ===\n";
+    for (int i = 0; i < static_cast<int>(genres.size()); ++i)
+        std::cout << i + 1 << ". " << genres[i] << "\n";
+ 
+    int genreNum;
+    std::cout << "확인하고 싶은 장르 번호를 입력하세요 > ";
+    std::cin >> genreNum;
+    if (genreNum < 1 || genreNum > static_cast<int>(genres.size())) {
+        std::cout << "잘못된 번호입니다.\n";
+        return;
+    }
+    const std::string& selectedGenre = genres[genreNum - 1];
+ 
+    // 선택 장르 중 평점 있는 영화를 평균 평점 내림차순 정렬
+    std::vector<const Movie*> candidates;
+    for (const auto& m : movies) {
+        if (m.getGenre() == selectedGenre && m.getAverageRating() > MIN_SCORE)
+            candidates.push_back(&m);
+    }
+    if (candidates.empty()) {
+        std::cout << "[" << selectedGenre << "] 장르에 평점이 있는 영화가 없습니다.\n";
+        return;
+    }
+    std::sort(candidates.begin(), candidates.end(),
+              [](const Movie* a, const Movie* b) {
+                  return a->getAverageRating() > b->getAverageRating();
+              });
+ 
+    int showCount = std::min(TOP_GENRE_COUNT, static_cast<int>(candidates.size()));
+    std::cout << "\n[" << selectedGenre << "] 장르 평점 TOP" << showCount << "\n";
+    for (int i = 0; i < showCount; ++i) {
+        std::cout << i + 1 << ". " << candidates[i]->getTitle()
+                  << "  (평균 평점: "
+                  << std::fixed << std::setprecision(RATING_PRECISION)
+                  << candidates[i]->getAverageRating() << ")\n";
+    }
 }

@@ -1,69 +1,56 @@
-#include <vector>
-#include "Rating.hpp"
-#include "Movie.hpp"
 #include "MovieManager.hpp"
+#include "Constants.hpp"
 #include <iostream>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <stdexcept>
  
-// 빈 맵 — getUserRatings() miss 시 반환용
+// getUserRatings() miss 시 반환할 빈 맵
 static const std::unordered_map<int, double> EMPTY_RATINGS;
  
 MovieManager::MovieManager()  {}
 MovieManager::~MovieManager() {}
  
-const std::vector<Movie>& MovieManager::getMovies() const {
-    return movies;
-}
+const std::vector<Movie>& MovieManager::getMovies() const { return movies; }
+int MovieManager::getMovieCount() const { return static_cast<int>(movies.size()); }
  
-int MovieManager::getMovieCount() const { return movies.size(); }
- 
-// ── addMovie ─────────────────────────────────────────────────────────────────
-// movies에 추가하는 동시에 movieIndex를 갱신한다.
-// push_back 후 인덱스를 저장하므로 재할당 시에도 포인터 대신 인덱스를 쓰기에 안전.
+// ── addMovie ──────────────────────────────────────────────────────────────────
+// push_back 후 인덱스를 저장해 재할당 시에도 안전하게 O(1) 조회 가능
 void MovieManager::addMovie(const Movie& movie) {
     movieIndex[movie.getId()] = movies.size();
     movies.push_back(movie);
 }
  
 // ── findMovieById ─────────────────────────────────────────────────────────────
-// 기존: O(M) 선형 탐색 → 개선: O(1) 인덱스 조회
+// movieIndex로 O(1) 조회 (선형 탐색 제거)
 Movie* MovieManager::findMovieById(int id) {
     auto it = movieIndex.find(id);
-    if (it == movieIndex.end()) return nullptr;
-    return &movies[it->second];
+    return (it == movieIndex.end()) ? nullptr : &movies[it->second];
 }
  
 const Movie* MovieManager::findMovieById(int id) const {
     auto it = movieIndex.find(id);
-    if (it == movieIndex.end()) return nullptr;
-    return &movies[it->second];
+    return (it == movieIndex.end()) ? nullptr : &movies[it->second];
 }
  
 // ── getUserRatings ────────────────────────────────────────────────────────────
-// 역색인에서 userId의 { movieId → score } 맵을 O(1)로 반환.
-// 없으면 빈 맵 반환.
-const std::unordered_map<int, double>&
-MovieManager::getUserRatings(int userId) const {
+// userRatingIndex로 O(1) 반환; 없으면 빈 맵 반환
+const std::unordered_map<int, double>& MovieManager::getUserRatings(int userId) const {
     auto it = userRatingIndex.find(userId);
-    if (it == userRatingIndex.end()) return EMPTY_RATINGS;
-    return it->second;
+    return (it == userRatingIndex.end()) ? EMPTY_RATINGS : it->second;
 }
  
 // ── getUserRatingCount ────────────────────────────────────────────────────────
-// 기존: O(M×R) 이중 루프 → 개선: O(1) 인덱스 조회
+// userRatingIndex로 O(1) 조회 (이중 루프 제거)
 int MovieManager::getUserRatingCount(int userId) const {
     auto it = userRatingIndex.find(userId);
-    if (it == userRatingIndex.end()) return 0;
-    return static_cast<int>(it->second.size());
+    return (it == userRatingIndex.end()) ? 0 : static_cast<int>(it->second.size());
 }
  
 // ── loadRatings ───────────────────────────────────────────────────────────────
-// 변경 사항:
-//   - findMovieById: O(M) → O(1) (movieIndex 사용)
-//   - 평점 추가와 동시에 userRatingIndex 구축
+// 평점 추가와 동시에 userRatingIndex를 구축해 이후 O(1) 조회 가능하게 함
 void MovieManager::loadRatings(UserManager& userManager) {
     std::ifstream file("data/ratings.csv");
     if (!file.is_open()) {
@@ -77,28 +64,33 @@ void MovieManager::loadRatings(UserManager& userManager) {
     while (std::getline(file, line)) {
         std::istringstream ss(line);
         std::string userIdStr, movieIdStr, scoreStr;
- 
         std::getline(ss, userIdStr,  '|');
         std::getline(ss, movieIdStr, '|');
         std::getline(ss, scoreStr,   '|');
  
-        int    userId  = std::stoi(userIdStr);
-        int    movieId = std::stoi(movieIdStr);
-        double score   = std::stod(scoreStr);
+        // 파일 손상에 대비해 변환 예외 처리
+        try {
+            int    userId  = std::stoi(userIdStr);
+            int    movieId = std::stoi(movieIdStr);
+            double score   = std::stod(scoreStr);
  
-        Movie*      movie = findMovieById(movieId); // O(1)
-        const User* user  = userManager.findUserById(userId);
+            Movie*      movie = findMovieById(movieId);
+            const User* user  = userManager.findUserById(userId);
  
-        if (movie && user) {
-            movie->getRatingManager().addRating(Rating(*user, score));
-            userRatingIndex[userId][movieId] = score; // 역색인 동시 구축
+            if (movie && user) {
+                movie->getRatingManager().addRating(Rating(*user, score));
+                userRatingIndex[userId][movieId] = score;
+            }
+        } catch (const std::invalid_argument&) {
+            std::cout << "ratings.csv: 잘못된 형식의 줄을 건너뜁니다 → " << line << "\n";
+        } catch (const std::out_of_range&) {
+            std::cout << "ratings.csv: 범위를 벗어난 값이 있는 줄을 건너뜁니다 → " << line << "\n";
         }
     }
 }
  
 // ── saveRatings ───────────────────────────────────────────────────────────────
-// userRatingIndex를 순회하면 Movie 전체를 돌지 않아도 되지만,
-// score는 RatingManager에 이미 있으므로 기존 방식 유지 (정확성 우선)
+// score의 정확성을 위해 RatingManager 데이터를 직접 순회
 void MovieManager::saveRatings() {
     std::ofstream file("data/ratings.csv");
     if (!file.is_open()) {
@@ -115,8 +107,6 @@ void MovieManager::saveRatings() {
         }
     }
 }
- 
-// ── 아래는 변경 없음 ──────────────────────────────────────────────────────────
  
 const Movie* MovieManager::findMovieByTitle(const std::string& title) const {
     for (const auto& movie : movies) {
@@ -141,24 +131,24 @@ void MovieManager::display() const {
  
 void MovieManager::displaySortedByRating() const {
     std::vector<Movie> sortedMovies = movies;
+    // 내림차순 정렬: operator> 활용
     std::sort(sortedMovies.begin(), sortedMovies.end(),
-              [](const Movie& a, const Movie& b) {
-                  return a.getAverageRating() > b.getAverageRating();
-              });
+              [](const Movie& a, const Movie& b) { return a > b; });
  
     std::cout << "평점 순으로 정렬된 영화 목록:" << std::endl;
     for (const auto& movie : sortedMovies) {
         std::cout << movie
-                  << " - Average Rating: " << std::fixed << std::setprecision(1) << movie.getAverageRating()
-                  << std::endl;
+                  << " - Average Rating: "
+                  << std::fixed << std::setprecision(RATING_PRECISION)
+                  << movie.getAverageRating() << std::endl;
     }
 }
  
 bool MovieManager::alreadyExists(const std::string& title,
                                  const std::string& genre, int year) const {
     for (const auto& movie : movies) {
-        if (movie.getTitle() == title &&
-            movie.getGenre() == genre &&
+        if (movie.getTitle()       == title &&
+            movie.getGenre()       == genre &&
             movie.getReleaseYear() == year)
             return true;
     }
@@ -168,9 +158,10 @@ bool MovieManager::alreadyExists(const std::string& title,
 void MovieManager::loadFromfile() {
     std::ifstream movieFile("data/movies.csv");
     if (!movieFile.is_open()) {
-        std::cout << "movie.csv를 열 수 없습니다." << std::endl;
+        std::cout << "movies.csv를 열 수 없습니다." << std::endl;
         return;
     }
+ 
     std::string line;
     std::getline(movieFile, line); // 헤더 스킵
  
@@ -182,23 +173,30 @@ void MovieManager::loadFromfile() {
         std::getline(ss, genre,   '|');
         std::getline(ss, yearStr, '|');
  
-        int id   = std::stoi(idStr);
-        int year = std::stoi(yearStr);
-        addMovie(Movie(id, title, genre, year)); // addMovie가 movieIndex도 갱신
+        try {
+            int id   = std::stoi(idStr);
+            int year = std::stoi(yearStr);
+            addMovie(Movie(id, title, genre, year));
+        } catch (const std::invalid_argument&) {
+            std::cout << "movies.csv: 잘못된 형식의 줄을 건너뜁니다 → " << line << "\n";
+        } catch (const std::out_of_range&) {
+            std::cout << "movies.csv: 범위를 벗어난 값이 있는 줄을 건너뜁니다 → " << line << "\n";
+        }
     }
 }
  
 void MovieManager::saveToFile() {
     std::ofstream movieFile("data/movies.csv");
     if (!movieFile.is_open()) {
-        std::cout << "movie.csv를 열 수 없습니다." << std::endl;
+        std::cout << "movies.csv를 열 수 없습니다." << std::endl;
         return;
     }
+ 
     movieFile << "id|title|genre|releaseYear\n";
     for (const auto& movie : movies) {
-        movieFile << movie.getId()         << "|"
-                  << movie.getTitle()      << "|"
-                  << movie.getGenre()      << "|"
-                  << movie.getReleaseYear()<< "\n";
+        movieFile << movie.getId()          << "|"
+                  << movie.getTitle()       << "|"
+                  << movie.getGenre()       << "|"
+                  << movie.getReleaseYear() << "\n";
     }
 }
