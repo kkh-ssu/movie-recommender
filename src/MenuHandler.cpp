@@ -109,6 +109,29 @@ static void paginate(const std::vector<T>& items,
     }
 }
 
+
+// ── 사용자 목록 간이 출력 (평점 입력·수정 시 선택용, 페이지네이션 적용) ───────
+static void displayUsersPaged(const UserManager& um) {
+    if (um.getUserCount() == 0) return;
+    const auto& users = um.getUsers();
+    paginate<User>(users, "사용자 목록",
+        [](int no, const User& u) {
+            std::cout << no << ". " << u.getName()
+                      << "  (ID: " << u.getId() << ")\n";
+        });
+}
+
+static void displayMoviesPaged(const MovieManager& mm) {
+    if (mm.getMovieCount() == 0) return;
+    const auto& movies = mm.getMovies();
+    paginate<Movie>(movies, "영화 목록",
+        [](int no, const Movie& m) {
+            std::cout << no << ". " << m.getTitle()
+                      << "  (ID: " << m.getId() << ")\n";
+        });
+}
+
+
 // ── 메뉴 출력 ─────────────────────────────────────────────────────────────────
 void printMenu() {
     std::cout << "=== Movie Recommender ===\n\n";
@@ -258,19 +281,11 @@ void handleListUsers(UserManager& um) {
         });
 }
 
-// ── 사용자 목록 간이 출력 (평점 입력·수정 시 선택용, 페이지네이션 적용) ───────
-static void displayUsersPaged(const UserManager& um) {
-    if (um.getUserCount() == 0) return;
-    const auto& users = um.getUsers();
-    paginate<User>(users, "사용자 목록",
-        [](int no, const User& u) {
-            std::cout << no << ". " << u.getName()
-                      << "  (ID: " << u.getId() << ")\n";
-        });
-}
-
 // ── 7. 평점 입력 ──────────────────────────────────────────────────────────────
 void handleAddRating(MovieManager& mm, UserManager& um) {
+
+    displayMoviesPaged(mm);
+
     std::string title;
     std::cout << "평점을 입력할 영화 제목을 입력해주세요 : ";
     std::getline(std::cin, title);
