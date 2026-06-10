@@ -17,14 +17,12 @@ const std::vector<Movie>& MovieManager::getMovies() const { return movies; }
 int MovieManager::getMovieCount() const { return static_cast<int>(movies.size()); }
  
 // ── addMovie ──────────────────────────────────────────────────────────────────
-// push_back 후 인덱스를 저장해 재할당 시에도 안전하게 O(1) 조회 가능
 void MovieManager::addMovie(const Movie& movie) {
     movieIndex[movie.getId()] = movies.size();
     movies.push_back(movie);
 }
  
 // ── findMovieById ─────────────────────────────────────────────────────────────
-// movieIndex로 O(1) 조회 (선형 탐색 제거)
 Movie* MovieManager::findMovieById(int id) {
     auto it = movieIndex.find(id);
     return (it == movieIndex.end()) ? nullptr : &movies[it->second];
@@ -36,21 +34,24 @@ const Movie* MovieManager::findMovieById(int id) const {
 }
  
 // ── getUserRatings ────────────────────────────────────────────────────────────
-// userRatingIndex로 O(1) 반환; 없으면 빈 맵 반환
 const std::unordered_map<int, double>& MovieManager::getUserRatings(int userId) const {
     auto it = userRatingIndex.find(userId);
     return (it == userRatingIndex.end()) ? EMPTY_RATINGS : it->second;
 }
  
+// ── updateUserRatingIndex ─────────────────────────────────────────────────────
+// 평점 수정 시 역색인 동기화용. RatingManager::updateRating() 과 쌍으로 호출한다.
+void MovieManager::updateUserRatingIndex(int userId, int movieId, double newScore) {
+    userRatingIndex[userId][movieId] = newScore;
+}
+ 
 // ── getUserRatingCount ────────────────────────────────────────────────────────
-// userRatingIndex로 O(1) 조회 (이중 루프 제거)
 int MovieManager::getUserRatingCount(int userId) const {
     auto it = userRatingIndex.find(userId);
     return (it == userRatingIndex.end()) ? 0 : static_cast<int>(it->second.size());
 }
  
 // ── loadRatings ───────────────────────────────────────────────────────────────
-// 평점 추가와 동시에 userRatingIndex를 구축해 이후 O(1) 조회 가능하게 함
 void MovieManager::loadRatings(UserManager& userManager) {
     std::ifstream file("data/ratings.csv");
     if (!file.is_open()) {
@@ -68,7 +69,6 @@ void MovieManager::loadRatings(UserManager& userManager) {
         std::getline(ss, movieIdStr, '|');
         std::getline(ss, scoreStr,   '|');
  
-        // 파일 손상에 대비해 변환 예외 처리
         try {
             int    userId  = std::stoi(userIdStr);
             int    movieId = std::stoi(movieIdStr);
@@ -90,7 +90,6 @@ void MovieManager::loadRatings(UserManager& userManager) {
 }
  
 // ── saveRatings ───────────────────────────────────────────────────────────────
-// score의 정확성을 위해 RatingManager 데이터를 직접 순회
 void MovieManager::saveRatings() {
     std::ofstream file("data/ratings.csv");
     if (!file.is_open()) {
@@ -131,7 +130,6 @@ void MovieManager::display() const {
  
 void MovieManager::displaySortedByRating() const {
     std::vector<Movie> sortedMovies = movies;
-    // 내림차순 정렬: operator> 활용
     std::sort(sortedMovies.begin(), sortedMovies.end(),
               [](const Movie& a, const Movie& b) { return a > b; });
  
@@ -200,3 +198,4 @@ void MovieManager::saveToFile() {
                   << movie.getReleaseYear() << "\n";
     }
 }
+ 

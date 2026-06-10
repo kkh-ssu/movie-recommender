@@ -16,6 +16,30 @@ void RatingManager::addRating(const Rating& rating) {
     averageRating = totalRating / ratingCount;
 }
  
+// ── updateRating ──────────────────────────────────────────────────────────────
+// 해당 userId 의 평점을 newScore 로 교체하고 평균을 재계산한다.
+// 평점이 존재하지 않으면 false 를 반환한다.
+bool RatingManager::updateRating(int userId, double newScore) {
+    for (auto& r : ratings) {
+        if (r.getUser().getId() == userId) {
+            totalRating -= r.getScore();
+            r.setScore(newScore);
+            totalRating += newScore;
+            averageRating = totalRating / ratingCount;
+            return true;
+        }
+    }
+    return false;
+}
+ 
+// ── hasRating ─────────────────────────────────────────────────────────────────
+bool RatingManager::hasRating(int userId) const {
+    for (const auto& r : ratings) {
+        if (r.getUser().getId() == userId) return true;
+    }
+    return false;
+}
+ 
 int RatingManager::getRatingCount() const { return ratingCount; }
 int RatingManager::size() const
 {
