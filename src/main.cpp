@@ -10,41 +10,40 @@
 #include "UserManager.hpp"
 #include "RatingManager.hpp"
 #include "Recommender.hpp"
- 
+
 int main() {
     MovieManager movieManager;
     UserManager userManager;
- 
+
     userManager.loadFromfile();
     movieManager.loadFromfile();
     movieManager.loadRatings(userManager); 
- 
+
     int mode=-1;
     while(mode){
         std::cout<<"=== Movie Recommender ===\n"<<std::endl;
         std::cout<<"[ 영화 ]\n1. 영화 추가\n2. 제목으로 검색\n3. 전체 목록 출력\n4. 평점순 출력\n"<<std::endl;
         std::cout<<"[ 사용자 ]\n5. 사용자 추가\n6. 사용자 목록 출력\n"<<std::endl;
-        std::cout<<"[ 평점 ]\n7. 평점 입력\n8. 영화별 평점 보기\n"<<std::endl;
-        std::cout<<"[ 추천 ]\n9. 영화 추천\n10. 장르별 TOP3 추천\n"<<std::endl;
+        std::cout<<"[ 평점 ]\n7. 평점 입력\n8. 영화별 평점 보기\n9.영화 추천\n10. 장르별 TOP3 추천\n"<<std::endl;
         std::cout<<"0. 종료\n"<<std::endl;
- 
+
         if(movieManager.getMovieCount()==0){
             std::cout<<"경고: 등록된 영화가 없습니다. 영화를 추가해주세요.\n"<<std::endl;
         }
         if(userManager.getUserCount()==0){
             std::cout<<"경고: 등록된 사용자가 없습니다. 사용자를 추가해주세요.\n"<<std::endl;
         }
- 
+
         std::cout<<"선택 >";
         std::cin>>mode;
- 
+
         switch (mode) {
         case 1 : {
             std::cout<<"추가 할 영화 제목을 입력해주세요 : ";
             std::string title;
             std::cin>>title;
-            if (title.find(',') != std::string::npos) {
-                std::cout<<"',' 대신 '.'으로 입력해주세요"<<std::endl;
+            if (title.find('|') != std::string::npos) {
+                std::cout<<"'|' 는 사용할 수 없습니다. 다른 문자로 입력해주세요"<<std::endl;
                 break;
             }
             std::cout<<"추가 할 영화 장르를 입력해주세요 : ";
@@ -172,7 +171,7 @@ int main() {
                 std::cout<<"영화를 찾을 수 없습니다."<<std::endl;
             }
             break;
- 
+
         }
         case 9: {
             std::cout << "추천받을 사용자 이름을 입력해주세요 : ";
@@ -180,7 +179,7 @@ int main() {
             std::cin >> name;
             const User* user = userManager.findUserByName(name);
             if (!user) { std::cout << "사용자를 찾을 수 없습니다.\n"; break; }
- 
+
             auto recommendations = Recommender::recommend(user->getId(),
                                                         userManager,
                                                         movieManager);
@@ -203,39 +202,39 @@ int main() {
                 if (std::find(genres.begin(), genres.end(), g) == genres.end())
                     genres.push_back(g);
             }
- 
+
             std::cout << "=== 장르 목록 ===\n";
             for (int i = 0; i < static_cast<int>(genres.size()); ++i)
                 std::cout << i + 1 << ". " << genres[i] << "\n";
- 
+
             // 2) 번호 입력
             std::cout << "확인하고 싶은 장르 번호를 입력하세요 > ";
             int genreNum;
             std::cin >> genreNum;
- 
+
             if (genreNum < 1 || genreNum > static_cast<int>(genres.size())) {
                 std::cout << "잘못된 번호입니다.\n";
                 break;
             }
             const std::string& selectedGenre = genres[genreNum - 1];
- 
+
             // 3) 해당 장르 영화 수집 후 평균 평점 내림차순 정렬
             std::vector<const Movie*> candidates;
             for (const auto& m : movies) {
                 if (m.getGenre() == selectedGenre && m.getAverageRating() > 0.0)
                     candidates.push_back(&m);
             }
- 
+
             if (candidates.empty()) {
                 std::cout << "[" << selectedGenre << "] 장르에 평점이 있는 영화가 없습니다.\n";
                 break;
             }
- 
+
             std::sort(candidates.begin(), candidates.end(),
                       [](const Movie* a, const Movie* b) {
                           return a->getAverageRating() > b->getAverageRating();
                       });
- 
+
             // 4) TOP3 출력
             int showCount = std::min(3, static_cast<int>(candidates.size()));
             std::cout << "\n[" << selectedGenre << "] 장르 평점 TOP" << showCount << "\n";
@@ -262,8 +261,8 @@ int main() {
         std::cin.get();
         system("clear");
     }
- 
- 
- 
+
+
+
     return 0;
 }
