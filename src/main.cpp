@@ -24,8 +24,7 @@ int main() {
         std::cout<<"=== Movie Recommender ===\n"<<std::endl;
         std::cout<<"[ 영화 ]\n1. 영화 추가\n2. 제목으로 검색\n3. 전체 목록 출력\n4. 평점순 출력\n"<<std::endl;
         std::cout<<"[ 사용자 ]\n5. 사용자 추가\n6. 사용자 목록 출력\n"<<std::endl;
-        std::cout<<"[ 평점 ]\n7. 평점 입력\n8. 영화별 평점 보기\n"<<std::endl;
-        std::cout<<"[ 추천 ]\n9. 사용자 별 영화 추천\n10. 장르별 TOP3 추천\n"<<std::endl;
+        std::cout<<"[ 평점 ]\n7. 평점 입력\n8. 영화별 평점 보기\n9.영화 추천\n10. 장르별 TOP3 추천\n"<<std::endl;
         std::cout<<"0. 종료\n"<<std::endl;
  
         if(movieManager.getMovieCount()==0){
@@ -43,6 +42,10 @@ int main() {
             std::cout<<"추가 할 영화 제목을 입력해주세요 : ";
             std::string title;
             std::cin>>title;
+            if (title.find('|') != std::string::npos) {
+                std::cout<<"'|' 는 사용할 수 없습니다. 다른 문자로 입력해주세요"<<std::endl;
+                break;
+            }
             std::cout<<"추가 할 영화 장르를 입력해주세요 : ";
             std::string genre;
             std::cin>>genre;
