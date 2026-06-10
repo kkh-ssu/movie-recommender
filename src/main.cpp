@@ -36,11 +36,12 @@ int main() {
         case 6:  MenuHandler::handleListUsers         (userManager);               break;
         case 7:  MenuHandler::handleAddRating         (movieManager, userManager); break;
         case 8:  MenuHandler::handleShowRatings       (movieManager);              break;
-        case 9:  MenuHandler::handleRecommend         (movieManager, userManager); break;
-        case 10: MenuHandler::handleGenreTopN         (movieManager);              break;
-        case 11: MenuHandler::handleFilterRecommend   (movieManager, userManager); break;
-        case 12: MenuHandler::handleUpdateRating      (movieManager, userManager); break;
-        case 13: MenuHandler::handleShowUserRatings   (movieManager, userManager); break;
+        case 9: MenuHandler::handleUpdateRating      (movieManager, userManager); break;
+        case 10: MenuHandler::handleShowUserRatings   (movieManager, userManager); break;
+        case 11:  MenuHandler::handleRecommend         (movieManager, userManager); break;
+        case 12: MenuHandler::handleGenreTopN         (movieManager);              break;
+        case 13: MenuHandler::handleFilterRecommend   (movieManager, userManager); break;
+        
         case 0:
             std::cout << "프로그램을 종료합니다." << std::endl;
             userManager.saveToFile();
