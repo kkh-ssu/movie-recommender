@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <functional>
+#include <typeinfo>
 
 namespace MenuHandler {
 
@@ -558,6 +559,9 @@ void handleFilterRecommend(MovieManager& mm, UserManager& um) {
 
 // ── 12. 평점 수정 ─────────────────────────────────────────────────────────────
 void handleUpdateRating(MovieManager& mm, UserManager& um) {
+
+    displayMoviesPaged(mm);
+
     std::string title;
     std::cout << "평점을 수정할 영화 제목을 입력해주세요 : ";
     std::getline(std::cin, title);
